@@ -112,7 +112,7 @@ if __name__ == '__main__':
     parser.add_argument('--graph_labels', nargs='+', default=["is_connected", "diameter", "spectral_radius"])
     parser.add_argument('--extrapolation', action='store_true', default=False,
                         help='Generated various test sets of dimensions larger than train and validation.')
-    parser.add_argument('--print_every', type=int, default=1, help='')
+    parser.add_argument('--print_every', type=int, default=20, help='')
     args = parser.parse_args()
 
     if 'sssp' in args.nodes_labels:
