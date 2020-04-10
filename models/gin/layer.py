@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from util.layers import FCLayer, MLP
+from util.layers import MLP
 
 
 class GINLayer(nn.Module):
@@ -21,7 +21,8 @@ class GINLayer(nn.Module):
         self.in_features = in_features
         self.out_features = out_features
         self.epsilon = nn.Parameter(torch.zeros(size=(1,), device=device))
-        self.post_transformation = MLP(in_size=in_features, hidden_size=max(in_features, out_features), out_size=out_features,
+        self.post_transformation = MLP(in_size=in_features, hidden_size=max(in_features, out_features),
+                                       out_size=out_features,
                                        layers=fc_layers, mid_activation='relu', last_activation='relu', mid_b_norm=True,
                                        last_b_norm=False, device=device)
         self.reset_parameters()
@@ -33,7 +34,7 @@ class GINLayer(nn.Module):
         (B, N, _) = adj.shape
 
         # sum aggregation
-        mod_adj = adj + torch.eye(N, device=self.device).unsqueeze(0)*(1+self.epsilon)
+        mod_adj = adj + torch.eye(N, device=self.device).unsqueeze(0) * (1 + self.epsilon)
         support = torch.matmul(mod_adj, input)
 
         # post-aggregation transformation

@@ -1,5 +1,6 @@
 import torch
 
+
 # each scaler is a function that takes as input X (B x N x Din), adj (B x N x N) and
 # avg_d (dictionary containing averages over training set) and returns X_scaled (B x N x Din) as output
 
@@ -38,6 +39,4 @@ def scale_inverse_linear(X, adj, avg_d=None):
 
 
 SCALERS = {'identity': scale_identity, 'amplification': scale_amplification, 'attenuation': scale_attenuation,
-            'linear': scale_linear, 'inverse_linear': scale_inverse_linear}
-
-    
+           'linear': scale_linear, 'inverse_linear': scale_inverse_linear}

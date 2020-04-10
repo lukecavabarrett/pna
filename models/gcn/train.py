@@ -1,7 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 
-from models.gnn_framework import GNN
 from models.gcn.layer import GCNLayer
 from util.train import execute_train, build_arg_parser
 

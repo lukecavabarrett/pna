@@ -26,8 +26,10 @@ class PNATower(nn.Module):
         self.self_loop = self_loop
         self.pretrans = MLP(in_size=2 * self.in_features, hidden_size=self.in_features, out_size=self.in_features,
                             layers=pretrans_layers, mid_activation='relu', last_activation='none')
-        self.posttrans = MLP(in_size=(len(aggregators) * len(scalers) + 1) * self.in_features, hidden_size=self.out_features,
-                             out_size=self.out_features, layers=posttrans_layers, mid_activation='relu', last_activation='none')
+        self.posttrans = MLP(in_size=(len(aggregators) * len(scalers) + 1) * self.in_features,
+                             hidden_size=self.out_features,
+                             out_size=self.out_features, layers=posttrans_layers, mid_activation='relu',
+                             last_activation='none')
         self.avg_d = avg_d
 
     def forward(self, input, adj):
@@ -40,7 +42,9 @@ class PNATower(nn.Module):
         h_mod = self.pretrans(h_cat)
 
         # aggregation
-        m = torch.cat([aggregate(h_mod, adj, self_loop=self.self_loop, device=self.device) for aggregate in self.aggregators],dim=2)
+        m = torch.cat(
+            [aggregate(h_mod, adj, self_loop=self.self_loop, device=self.device) for aggregate in self.aggregators],
+            dim=2)
         m = torch.cat([scale(m, adj, avg_d=self.avg_d) for scale in self.scalers], dim=2)
 
         # post-aggregation transformation
@@ -59,6 +63,7 @@ class PNALayer(nn.Module):
         Implements a single convolutional layer of the Principal Neighbourhood Aggregation Networks
         as described in XXX
     """
+
     def __init__(self, in_features, out_features, aggregators, scalers, avg_d, towers=1, self_loop=False,
                  pretrans_layers=1, posttrans_layers=1, divide_input=True, device='cpu'):
         """
@@ -74,7 +79,8 @@ class PNALayer(nn.Module):
         :param device:          device used for computation
         """
         super(PNALayer, self).__init__()
-        assert ((not divide_input) or in_features % towers == 0), "if divide_input is set the number of towers has to divide in_features"
+        assert ((
+                    not divide_input) or in_features % towers == 0), "if divide_input is set the number of towers has to divide in_features"
         assert (out_features % towers == 0), "the number of towers has to divide the out_features"
 
         # retrieve the aggregators and scalers functions
@@ -88,9 +94,10 @@ class PNALayer(nn.Module):
         # convolution
         self.towers = nn.ModuleList()
         for _ in range(towers):
-            self.towers.append(PNATower(in_features=self.input_tower, out_features=self.output_tower, aggregators=aggregators,
-                                        scalers=scalers, avg_d=avg_d, self_loop=self_loop, pretrans_layers=pretrans_layers,
-                                        posttrans_layers=posttrans_layers, device=device))
+            self.towers.append(
+                PNATower(in_features=self.input_tower, out_features=self.output_tower, aggregators=aggregators,
+                         scalers=scalers, avg_d=avg_d, self_loop=self_loop, pretrans_layers=pretrans_layers,
+                         posttrans_layers=posttrans_layers, device=device))
         # mixing network
         self.mixing_network = FCLayer(out_features, out_features, activation='LeakyReLU')
 

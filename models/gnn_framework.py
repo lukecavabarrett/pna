@@ -7,7 +7,8 @@ from util.layers import GRU, S2SReadout, MLP
 
 class GNN(nn.Module):
     def __init__(self, nfeat, nhid, nodes_out, graph_out, dropout, conv_layers=2, fc_layers=3, first_conv_descr=None,
-                 middle_conv_descr=None, final_activation='LeakyReLU', skip=False, gru=False, fixed=False, variable=False,
+                 middle_conv_descr=None, final_activation='LeakyReLU', skip=False, gru=False, fixed=False,
+                 variable=False,
                  device='cpu'):
         """
         :param nfeat:               number of input features per node
@@ -37,17 +38,21 @@ class GNN(nn.Module):
 
         if type(first_conv_descr) == dict:
             first_conv_descr = types.SimpleNamespace(**first_conv_descr)
-        assert type(first_conv_descr) == types.SimpleNamespace, "first_conv_descr should be either a dict or a SimpleNamespace"
+        assert type(
+            first_conv_descr) == types.SimpleNamespace, "first_conv_descr should be either a dict or a SimpleNamespace"
         if type(first_conv_descr.args) == dict:
             first_conv_descr.args = types.SimpleNamespace(**first_conv_descr.args)
-        assert type(first_conv_descr.args) == types.SimpleNamespace, "first_conv_descr.args should be either a dict or a SimpleNamespace"
+        assert type(
+            first_conv_descr.args) == types.SimpleNamespace, "first_conv_descr.args should be either a dict or a SimpleNamespace"
 
         if type(middle_conv_descr) == dict:
             middle_conv_descr = types.SimpleNamespace(**middle_conv_descr)
-        assert type(middle_conv_descr) == types.SimpleNamespace, "middle_conv_descr should be either a dict or a SimpleNamespace"
+        assert type(
+            middle_conv_descr) == types.SimpleNamespace, "middle_conv_descr should be either a dict or a SimpleNamespace"
         if type(middle_conv_descr.args) == dict:
             middle_conv_descr.args = types.SimpleNamespace(**middle_conv_descr.args)
-        assert type(middle_conv_descr.args) == types.SimpleNamespace, "middle_conv_descr.args should be either a dict or a SimpleNamespace"
+        assert type(
+            middle_conv_descr.args) == types.SimpleNamespace, "middle_conv_descr.args should be either a dict or a SimpleNamespace"
 
         self.dropout = dropout
         self.conv_layers = nn.ModuleList()
@@ -86,7 +91,8 @@ class GNN(nn.Module):
         skip_connections = [x] if self.skip else None
 
         n_layers = self.n_fixed_conv(adj) if self.variable else self.n_fixed_conv
-        conv_layers =  [self.conv_layers[0]] + ([self.conv_layers[1]] * (n_layers-1)) if self.fixed else self.conv_layers
+        conv_layers = [self.conv_layers[0]] + (
+                    [self.conv_layers[1]] * (n_layers - 1)) if self.fixed else self.conv_layers
 
         for layer, conv in enumerate(conv_layers):
             y = conv(x, adj)

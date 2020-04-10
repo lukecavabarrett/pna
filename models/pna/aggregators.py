@@ -1,6 +1,8 @@
 import math
 import torch
+
 EPS = 1e-5
+
 
 # each aggregator is a function taking as input X (B x N x N x Din), adj (B x N x N), self_loop and device and
 # returning the aggregated value of X (B x N x Din) for each dimension

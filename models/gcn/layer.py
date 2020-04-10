@@ -42,7 +42,8 @@ class GCNLayer(nn.Module):
 
         # normalised mean aggregation
         adj = adj + torch.eye(N, device=self.device).unsqueeze(0)
-        rD = torch.mul(torch.pow(torch.sum(adj, -1, keepdim=True), -0.5), torch.eye(N, device=self.device).unsqueeze(0))  # D^{-1/2]
+        rD = torch.mul(torch.pow(torch.sum(adj, -1, keepdim=True), -0.5),
+                       torch.eye(N, device=self.device).unsqueeze(0))  # D^{-1/2]
         adj = torch.matmul(torch.matmul(rD, adj), rD)  # D^{-1/2] A' D^{-1/2]
         y = torch.bmm(adj, XW)
 

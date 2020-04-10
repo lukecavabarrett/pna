@@ -135,7 +135,8 @@ class FCLayer(nn.Module):
             Output dimension of the linear layer
     """
 
-    def __init__(self, in_size, out_size, activation='relu', dropout=0., b_norm=False, bias=True, init_fn=None, device='cpu'):
+    def __init__(self, in_size, out_size, activation='relu', dropout=0., b_norm=False, bias=True, init_fn=None,
+                 device='cpu'):
         super(FCLayer, self).__init__()
 
         self.__params = locals()
@@ -159,7 +160,7 @@ class FCLayer(nn.Module):
     def reset_parameters(self, init_fn=None):
         init_fn = init_fn or self.init_fn
         if init_fn is not None:
-            init_fn(self.linear.weight, 1/self.in_size)
+            init_fn(self.linear.weight, 1 / self.in_size)
         if self.bias:
             self.linear.bias.data.zero_()
 
@@ -171,7 +172,7 @@ class FCLayer(nn.Module):
             h = self.dropout(h)
         if self.b_norm is not None:
             if h.shape[1] != self.out_size:
-                h = self.b_norm(h.transpose(1, 2)).transpose(1,2)
+                h = self.b_norm(h.transpose(1, 2)).transpose(1, 2)
             else:
                 h = self.b_norm(h)
         return h
@@ -186,6 +187,7 @@ class MLP(nn.Module):
     """
         Simple multi-layer perceptron, built of a series of FCLayers
     """
+
     def __init__(self, in_size, hidden_size, out_size, layers, mid_activation='relu', last_activation='none',
                  dropout=0., mid_b_norm=False, last_b_norm=False, device='cpu'):
         super(MLP, self).__init__()
@@ -222,6 +224,7 @@ class GRU(nn.Module):
     """
         Wrapper class for the GRU used by the GNN framework, nn.GRU is used for the Gated Recurrent Unit itself
     """
+
     def __init__(self, input_size, hidden_size, device):
         super(GRU, self).__init__()
         self.input_size = input_size
@@ -241,9 +244,9 @@ class GRU(nn.Module):
         y = y.reshape(1, B * N, -1).contiguous()
 
         # padding if necessary
-        if x.shape[-1]< self.input_size:
+        if x.shape[-1] < self.input_size:
             x = F.pad(input=x, pad=[0, self.input_size - x.shape[-1]], mode='constant', value=0)
-        if y.shape[-1]< self.hidden_size:
+        if y.shape[-1] < self.hidden_size:
             y = F.pad(input=y, pad=[0, self.hidden_size - y.shape[-1]], mode='constant', value=0)
 
         x = self.gru(x, y)[1]
@@ -255,15 +258,15 @@ class S2SReadout(nn.Module):
     """
         Performs a Set2Set aggregation of all the graph nodes' features followed by a series of fully connected layers
     """
-    def __init__(self, in_size, hidden_size, out_size, fc_layers=3, device='cpu', final_activation='relu'):
 
+    def __init__(self, in_size, hidden_size, out_size, fc_layers=3, device='cpu', final_activation='relu'):
         super(S2SReadout, self).__init__()
 
         # set2set aggregation
         self.set2set = Set2Set(in_size, device=device)
 
         # fully connected layers
-        self.mlp = MLP(in_size=2*in_size, hidden_size=hidden_size, out_size=out_size, layers=fc_layers,
+        self.mlp = MLP(in_size=2 * in_size, hidden_size=hidden_size, out_size=out_size, layers=fc_layers,
                        mid_activation="relu", last_activation=final_activation, mid_b_norm=True, last_b_norm=False,
                        device=device)
 

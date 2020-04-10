@@ -70,9 +70,9 @@ def ladder(N):
     """ Creates a ladder graph of N nodes: two rows of N/2 nodes, with each pair connected by a single edge.
         In case N is odd another node is attached to the first one. """
     G = nx.ladder_graph(N // 2)
-    if N%2 != 0:
-        G.add_node(N-1)
-        G.add_edge(0, N-1)
+    if N % 2 != 0:
+        G.add_node(N - 1)
+        G.add_edge(0, N - 1)
     return G
 
 
@@ -105,14 +105,14 @@ def lobster(N, seed):
         N − b − p pendent vertices uniformly connected to the previous pendent vertices """
     np.random.seed(seed)
     B = np.random.randint(low=1, high=N)
-    F = np.random.randint(low=B+1,high=N+1)
+    F = np.random.randint(low=B + 1, high=N + 1)
     G = nx.empty_graph(N)
     for i in range(1, B):
         G.add_edge(i - 1, i)
     for i in range(B, F):
         G.add_edge(i, np.random.randint(B))
     for i in range(F, N):
-        G.add_edge(i, np.random.randint(low=B,high=F))
+        G.add_edge(i, np.random.randint(low=B, high=F))
     return G
 
 

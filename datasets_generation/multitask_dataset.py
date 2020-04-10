@@ -1,7 +1,6 @@
 import argparse
 import os
 import pickle
-import sys
 
 import numpy as np
 import torch
@@ -18,7 +17,6 @@ class DatasetMultitask:
         self.features = {}
         self.nodes_labels = {}
         self.graph_labels = {}
-        generated = 0
 
         def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd=""):
             percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
