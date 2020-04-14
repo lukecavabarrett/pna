@@ -1,6 +1,6 @@
 # Principal Neighbourhood Aggregation
 
-Principal Neighbourhood Aggregation for GNNs [https://arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718)
+Principal Neighbourhood Aggregation for Graph Nets [https://arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718)
 
 ## Overview
 
