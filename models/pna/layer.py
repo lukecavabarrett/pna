@@ -27,9 +27,8 @@ class PNATower(nn.Module):
         self.pretrans = MLP(in_size=2 * self.in_features, hidden_size=self.in_features, out_size=self.in_features,
                             layers=pretrans_layers, mid_activation='relu', last_activation='none')
         self.posttrans = MLP(in_size=(len(aggregators) * len(scalers) + 1) * self.in_features,
-                             hidden_size=self.out_features,
-                             out_size=self.out_features, layers=posttrans_layers, mid_activation='relu',
-                             last_activation='none')
+                             hidden_size=self.out_features, out_size=self.out_features, layers=posttrans_layers,
+                             mid_activation='relu', last_activation='none')
         self.avg_d = avg_d
 
     def forward(self, input, adj):
@@ -42,9 +41,7 @@ class PNATower(nn.Module):
         h_mod = self.pretrans(h_cat)
 
         # aggregation
-        m = torch.cat(
-            [aggregate(h_mod, adj, self_loop=self.self_loop, device=self.device) for aggregate in self.aggregators],
-            dim=2)
+        m = torch.cat([aggregate(h_mod, adj, self_loop=self.self_loop, device=self.device) for aggregate in self.aggregators], dim=2)
         m = torch.cat([scale(m, adj, avg_d=self.avg_d) for scale in self.scalers], dim=2)
 
         # post-aggregation transformation
@@ -79,8 +76,7 @@ class PNALayer(nn.Module):
         :param device:          device used for computation
         """
         super(PNALayer, self).__init__()
-        assert ((
-                    not divide_input) or in_features % towers == 0), "if divide_input is set the number of towers has to divide in_features"
+        assert ((not divide_input) or in_features % towers == 0), "if divide_input is set the number of towers has to divide in_features"
         assert (out_features % towers == 0), "the number of towers has to divide the out_features"
 
         # retrieve the aggregators and scalers functions

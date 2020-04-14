@@ -1,6 +1,6 @@
 # Principal Neighbourhood Aggregation
 
-Principal Neighbourhood Aggregation for GNNs [https://arxiv.org/abs/XXX](https://arxiv.org/abs/XXX)
+Principal Neighbourhood Aggregation for GNNs [https://arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718)
 
 ## Overview
 
@@ -41,7 +41,16 @@ The model specified by the arguments above uses the same architecture (represent
 
 
 ## Reference
-...
+```
+@misc{corso2020principal,
+    title={Principal Neighbourhood Aggregation for Graph Nets},
+    author={Gabriele Corso and Luca Cavalleri and Dominique Beaini and Pietro Liò and Petar Veličković},
+    year={2020},
+    eprint={2004.05718},
+    archivePrefix={arXiv},
+    primaryClass={cs.LG}
+}
+```
 
 ## License
 MIT

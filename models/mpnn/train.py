@@ -30,9 +30,7 @@ execute_train(gnn_args=dict(nfeat=None,
                                                       divide_input=False,
                                                       pretrans_layers=args.pretrans_layers,
                                                       posttrans_layers=args.posttrans_layers
-
-                                                  )
-                                                  ),
+                                                  )),
                             middle_conv_descr=dict(layer_type=PNALayer,
                                                    args=dict(
                                                        aggregators=[args.aggregation],
@@ -42,8 +40,7 @@ execute_train(gnn_args=dict(nfeat=None,
                                                        divide_input=True,
                                                        pretrans_layers=args.pretrans_layers,
                                                        posttrans_layers=args.posttrans_layers
-                                                   )
-                                                   ),
+                                                   )),
                             fc_layers=args.fc_layers,
                             conv_layers=args.conv_layers,
                             skip=args.skip,

@@ -38,21 +38,19 @@ class GNN(nn.Module):
 
         if type(first_conv_descr) == dict:
             first_conv_descr = types.SimpleNamespace(**first_conv_descr)
-        assert type(
-            first_conv_descr) == types.SimpleNamespace, "first_conv_descr should be either a dict or a SimpleNamespace"
+        assert type(first_conv_descr) == types.SimpleNamespace, "first_conv_descr should be dict or SimpleNamespace"
         if type(first_conv_descr.args) == dict:
             first_conv_descr.args = types.SimpleNamespace(**first_conv_descr.args)
-        assert type(
-            first_conv_descr.args) == types.SimpleNamespace, "first_conv_descr.args should be either a dict or a SimpleNamespace"
+        assert type(first_conv_descr.args) == types.SimpleNamespace, \
+            "first_conv_descr.args should be either a dict or a SimpleNamespace"
 
         if type(middle_conv_descr) == dict:
             middle_conv_descr = types.SimpleNamespace(**middle_conv_descr)
-        assert type(
-            middle_conv_descr) == types.SimpleNamespace, "middle_conv_descr should be either a dict or a SimpleNamespace"
+        assert type(middle_conv_descr) == types.SimpleNamespace, "middle_conv_descr should be dict or SimpleNamespace"
         if type(middle_conv_descr.args) == dict:
             middle_conv_descr.args = types.SimpleNamespace(**middle_conv_descr.args)
-        assert type(
-            middle_conv_descr.args) == types.SimpleNamespace, "middle_conv_descr.args should be either a dict or a SimpleNamespace"
+        assert type(middle_conv_descr.args) == types.SimpleNamespace, \
+            "middle_conv_descr.args should be either a dict or a SimpleNamespace"
 
         self.dropout = dropout
         self.conv_layers = nn.ModuleList()
@@ -91,8 +89,7 @@ class GNN(nn.Module):
         skip_connections = [x] if self.skip else None
 
         n_layers = self.n_fixed_conv(adj) if self.variable else self.n_fixed_conv
-        conv_layers = [self.conv_layers[0]] + (
-                    [self.conv_layers[1]] * (n_layers - 1)) if self.fixed else self.conv_layers
+        conv_layers = [self.conv_layers[0]] + ([self.conv_layers[1]] * (n_layers - 1)) if self.fixed else self.conv_layers
 
         for layer, conv in enumerate(conv_layers):
             y = conv(x, adj)

@@ -148,9 +148,8 @@ if __name__ == '__main__':
                                  'test-(60,65)': range(60, 65), 'test-(75,80)': range(75, 80),
                                  'test-(95,100)': range(95, 100)} if args.extrapolation else
                                 {'test': range(15, 25)})},
-                            seed=args.seed,
-                            graph_type=getattr(GraphType, args.graph_type), get_nodes_labels=get_nodes_labels,
-                            get_graph_labels=get_graph_labels, print_every=args.print_every, sssp=sssp,
-                            filename=args.out)
+                            seed=args.seed, graph_type=getattr(GraphType, args.graph_type),
+                            get_nodes_labels=get_nodes_labels, get_graph_labels=get_graph_labels,
+                            print_every=args.print_every, sssp=sssp, filename=args.out)
 
     data.save_as_pickle(args.out)

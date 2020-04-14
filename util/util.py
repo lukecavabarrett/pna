@@ -88,8 +88,8 @@ def total_loss_multiple_batches(output, target, loss='mse', only_nodes=False, on
     """ returns the average of the average losses of each task over all batches,
         batches are weighted equally regardless of their cardinality or graph size """
     return sum([total_loss((output[0][batch], output[1][batch]), (target[0][batch], target[1][batch]),
-                           loss, only_nodes, only_graph).data.item() for batch in range(len(output[0]))]) / len(
-        output[0])
+                           loss, only_nodes, only_graph).data.item()
+                for batch in range(len(output[0]))]) / len(output[0])
 
 
 def specific_loss(output, target, loss='mse', only_nodes=False, only_graph=False):
