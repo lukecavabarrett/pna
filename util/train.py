@@ -23,22 +23,22 @@ def build_arg_parser():
     """
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--data', type=str, default='../../data/multitask_vardim_data_sometests.pkl', help='Data path.')
+    parser.add_argument('--data', type=str, default='../../data/multitask_dataset.pkl', help='Data path.')
     parser.add_argument('--no-cuda', action='store_true', default=False, help='Disables CUDA training.')
     parser.add_argument('--only_nodes', action='store_true', default=False, help='Evaluate only nodes labels.')
     parser.add_argument('--only_graph', action='store_true', default=False, help='Evaluate only graph labels.')
     parser.add_argument('--seed', type=int, default=42, help='Random seed.')
-    parser.add_argument('--epochs', type=int, default=2, help='Number of epochs to train.')
+    parser.add_argument('--epochs', type=int, default=10000, help='Number of epochs to train.')
     parser.add_argument('--lr', type=float, default=0.003, help='Initial learning rate.')
     parser.add_argument('--weight_decay', type=float, default=1e-6, help='Weight decay (L2 loss on parameters).')
     parser.add_argument('--hidden', type=int, default=16, help='Number of hidden units.')
     parser.add_argument('--dropout', type=float, default=0.0, help='Dropout rate (1 - keep probability).')
-    parser.add_argument('--patience', type=int, default=100, help='Patience')
+    parser.add_argument('--patience', type=int, default=1000, help='Patience')
     parser.add_argument('--conv_layers', type=int, default=None, help='Graph convolutions')
     parser.add_argument('--variable_conv_layers', type=str, default='N', help='Graph convolutions function name')
     parser.add_argument('--fc_layers', type=int, default=3, help='Fully connected layers in readout')
     parser.add_argument('--loss', type=str, default='mse', help='Loss function to use.')
-    parser.add_argument('--print_every', type=int, default=1, help='Print training results every')
+    parser.add_argument('--print_every', type=int, default=50, help='Print training results every')
     parser.add_argument('--final_activation', type=str, default='LeakyReLu',
                         help='final activation in both FC layers for nodes and S2S for Graph')
     parser.add_argument('--skip', action='store_true', default=False,
