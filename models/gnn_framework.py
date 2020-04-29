@@ -8,8 +8,7 @@ from util.layers import GRU, S2SReadout, MLP
 class GNN(nn.Module):
     def __init__(self, nfeat, nhid, nodes_out, graph_out, dropout, conv_layers=2, fc_layers=3, first_conv_descr=None,
                  middle_conv_descr=None, final_activation='LeakyReLU', skip=False, gru=False, fixed=False,
-                 variable=False,
-                 device='cpu'):
+                 variable=False, device='cpu'):
         """
         :param nfeat:               number of input features per node
         :param nhid:                number of hidden features per node

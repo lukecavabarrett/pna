@@ -87,26 +87,28 @@ def total_loss(output, target, loss='mse', only_nodes=False, only_graph=False):
 def total_loss_multiple_batches(output, target, loss='mse', only_nodes=False, only_graph=False):
     """ returns the average of the average losses of each task over all batches,
         batches are weighted equally regardless of their cardinality or graph size """
+    n_batches = len(output[0])
     return sum([total_loss((output[0][batch], output[1][batch]), (target[0][batch], target[1][batch]),
                            loss, only_nodes, only_graph).data.item()
-                for batch in range(len(output[0]))]) / len(output[0])
+                for batch in range(n_batches)]) / n_batches
 
 
 def specific_loss(output, target, loss='mse', only_nodes=False, only_graph=False):
     """ returns the average loss for each task """
     assert not (only_nodes and only_graph)
+    n_nodes_labels = output[0].shape[-1] if not only_graph else 0
+    n_graph_labels = output[1].shape[-1] if not only_nodes else 0
 
     if only_nodes:
-        nodes_losses = [get_loss(loss, output[0][:, :, k], target[0][:, :, k]).item() for k in
-                        range(output[0].shape[-1])]
-        return nodes_losses
+        nodes_loss = [get_loss(loss, output[0][:, :, k], target[0][:, :, k]).item() for k in range(n_nodes_labels)]
+        return nodes_loss
     elif only_graph:
-        graph_loss = [get_loss(loss, output[1][:, k], target[1][:, k]).item() for k in range(output[1].shape[-1])]
+        graph_loss = [get_loss(loss, output[1][:, k], target[1][:, k]).item() for k in range(n_graph_labels)]
         return graph_loss
 
-    nodes_losses = [get_loss(loss, output[0][:, :, k], target[0][:, :, k]).item() for k in range(output[0].shape[-1])]
-    graph_loss = [get_loss(loss, output[1][:, k], target[1][:, k]).item() for k in range(output[1].shape[-1])]
-    return nodes_losses + graph_loss
+    nodes_loss = [get_loss(loss, output[0][:, :, k], target[0][:, :, k]).item() for k in range(n_nodes_labels)]
+    graph_loss = [get_loss(loss, output[1][:, k], target[1][:, k]).item() for k in range(n_graph_labels)]
+    return nodes_loss + graph_loss
 
 
 def specific_loss_multiple_batches(output, target, loss='mse', only_nodes=False, only_graph=False):

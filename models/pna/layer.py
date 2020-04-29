@@ -20,7 +20,6 @@ class PNATower(nn.Module):
         self.device = device
         self.in_features = in_features
         self.out_features = out_features
-        self.gru_features = in_features * len(aggregators) * len(scalers)
         self.aggregators = aggregators
         self.scalers = scalers
         self.self_loop = self_loop
@@ -58,7 +57,7 @@ class PNATower(nn.Module):
 class PNALayer(nn.Module):
     """
         Implements a single convolutional layer of the Principal Neighbourhood Aggregation Networks
-        as described in XXX
+        as described in https://arxiv.org/abs/2004.05718
     """
 
     def __init__(self, in_features, out_features, aggregators, scalers, avg_d, towers=1, self_loop=False,
