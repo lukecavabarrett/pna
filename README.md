@@ -42,13 +42,11 @@ The model specified by the arguments above uses the same architecture (represent
 
 ## Reference
 ```
-@misc{corso2020principal,
-    title={Principal Neighbourhood Aggregation for Graph Nets},
-    author={Gabriele Corso and Luca Cavalleri and Dominique Beaini and Pietro Liò and Petar Veličković},
-    year={2020},
-    eprint={2004.05718},
-    archivePrefix={arXiv},
-    primaryClass={cs.LG}
+@article{corso2020principal,
+  title={Principal Neighbourhood Aggregation for Graph Nets},
+  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Li{\`o}, Pietro and Veli{\v{c}}kovi{\'c}, Petar},
+  journal={arXiv preprint arXiv:2004.05718},
+  year={2020}
 }
 ```
 
