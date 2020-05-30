@@ -23,6 +23,8 @@ pip3 install -r multitask_benchmark/requirements.txt
 
 ## Test run
 
+Move to the source of the repository before running the following.
+
 Generate the benchmark dataset (add `--extrapolation` for multiple test sets of different sizes):
 ```
 python3 -m multitask_benchmark.datasets_generation.multitask_dataset
