@@ -4,7 +4,6 @@ from __future__ import print_function
 import pickle
 import torch
 import torch.nn.functional as F
-import os,sys
 
 def load_dataset(data_path, loss, only_nodes, only_graph, print_baseline=True):
     with open(data_path, 'rb') as f:
