@@ -1,8 +1,8 @@
 from __future__ import division
 from __future__ import print_function
 
-from models.gat.layer import GATLayer
-from util.train import execute_train, build_arg_parser
+from models.pytorch.gat.layer import GATLayer
+from multitask_benchmark.util.train import execute_train, build_arg_parser
 
 # Training settings
 parser = build_arg_parser()

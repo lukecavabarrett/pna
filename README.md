@@ -37,7 +37,7 @@ python -m models.pna.train --variable --fixed --gru --variable_conv_layers=N/2 -
 
 The model specified by the arguments above uses the same architecture (represented in the image below) and the same aggregators and scalers as used for the results in the paper. Note that the default hyper-parameters are not the best performing for every model, refer to the paper for details on how we set them.
 
-![Architecture](PNA_architecture.png)
+![Architecture](../PNA_architecture.png)
 
 
 ## Reference

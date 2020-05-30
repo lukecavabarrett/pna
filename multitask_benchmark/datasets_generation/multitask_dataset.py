@@ -6,8 +6,10 @@ import numpy as np
 import torch
 from inspect import signature
 
-from datasets_generation import graph_algorithms
-from datasets_generation.graph_generation import GraphType, generate_graph
+from tqdm import tqdm
+
+from . import graph_algorithms
+from .graph_generation import GraphType, generate_graph
 
 
 class DatasetMultitask:
@@ -17,12 +19,6 @@ class DatasetMultitask:
         self.features = {}
         self.nodes_labels = {}
         self.graph_labels = {}
-
-        def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█', printEnd=""):
-            percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-            filledLength = int(length * iteration // total)
-            bar = fill * filledLength + '-' * (length - filledLength)
-            print('\r{} |{}| {}% {}'.format(prefix, bar, percent, suffix), end=printEnd)
 
         def to_categorical(x, N):
             v = np.zeros(N)
@@ -39,11 +35,8 @@ class DatasetMultitask:
             set_features = [[] for _ in n_graphs[dset]]
             set_nodes_labels = [[] for _ in n_graphs[dset]]
             set_graph_labels = [[] for _ in n_graphs[dset]]
-            generated = 0
 
-            progress_bar(0, total_n_graphs, prefix='Generating {:20}\t\t'.format(dset),
-                         suffix='({} of {})'.format(0, total_n_graphs))
-
+            t = tqdm(total=np.sum(n_graphs[dset]), desc=dset, leave=True, unit=' graphs')
             for batch, batch_size in enumerate(n_graphs[dset]):
                 for i in range(batch_size):
                     # generate a random graph of type graph_type and size N
@@ -55,10 +48,7 @@ class DatasetMultitask:
                         seed += 1
                         adj, features, _ = generate_graph(N[dset][batch], type, seed=seed)
 
-                    generated += 1
-                    if generated % print_every == 0:
-                        progress_bar(generated, total_n_graphs, prefix='Generating {:20}\t\t'.format(dset),
-                                     suffix='({} of {})'.format(generated, total_n_graphs))
+                    t.update(1)
 
                     # make sure there are no self connection
                     assert np.all(
@@ -86,8 +76,6 @@ class DatasetMultitask:
             self.features[dset] = [torch.from_numpy(np.asarray(fs)).float() for fs in set_features]
             self.nodes_labels[dset] = [torch.from_numpy(np.asarray(nls)).float() for nls in set_nodes_labels]
             self.graph_labels[dset] = [torch.from_numpy(np.asarray(gls)).float() for gls in set_graph_labels]
-            progress_bar(total_n_graphs, total_n_graphs, prefix='Generating {:20}\t\t'.format(dset),
-                         suffix='({} of {})'.format(total_n_graphs, total_n_graphs), printEnd='\n')
 
         self.save_as_pickle(filename)
 
@@ -98,12 +86,12 @@ class DatasetMultitask:
             os.makedirs(directory)
 
         with open(filename, 'wb') as f:
-            pickle.dump((self.adj, self.features, self.nodes_labels, self.graph_labels), f)
+            torch.save((self.adj, self.features, self.nodes_labels, self.graph_labels), f)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--out', type=str, default='./data/multitask_dataset.pkl', help='Data path.')
+    parser.add_argument('--out', type=str, default='./multitask_benchmark/data/multitask_dataset.pkl', help='Data path.')
     parser.add_argument('--seed', type=int, default=1234, help='Random seed.')
     parser.add_argument('--graph_type', type=str, default='RANDOM', help='Type of graphs in train set')
     parser.add_argument('--nodes_labels', nargs='+', default=["eccentricity", "graph_laplacian_features", "sssp"])

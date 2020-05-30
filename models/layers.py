@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from util.util import get_activation
+from multitask_benchmark.util.util import get_activation
 
 
 class Set2Set(torch.nn.Module):

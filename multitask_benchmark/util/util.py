@@ -4,11 +4,11 @@ from __future__ import print_function
 import pickle
 import torch
 import torch.nn.functional as F
-
+import os,sys
 
 def load_dataset(data_path, loss, only_nodes, only_graph, print_baseline=True):
     with open(data_path, 'rb') as f:
-        (adj, features, node_labels, graph_labels) = pickle.load(f)
+        (adj, features, node_labels, graph_labels) = torch.load(f)
 
     # normalize labels
     max_node_labels = torch.cat([nls.max(0)[0].max(0)[0].unsqueeze(0) for nls in node_labels['train']]).max(0)[0]

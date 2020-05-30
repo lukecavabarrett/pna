@@ -11,15 +11,17 @@ import math
 import numpy as np
 import torch
 import torch.optim as optim
+from tqdm import tqdm
 
-from models.gnn_framework import GNN
-from util.util import load_dataset, total_loss, total_loss_multiple_batches, specific_loss_multiple_batches
+from models.pytorch.gnn_framework import GNN
+from multitask_benchmark.util.util import load_dataset, total_loss, total_loss_multiple_batches, \
+    specific_loss_multiple_batches
 
 
 def build_arg_parser():
     """
     :return:    argparse.ArgumentParser() filled with the standard arguments for a training session.
-                    Might need to be enhanced for some models.
+                    Might need to be enhanced for some train_scripts.
     """
     parser = argparse.ArgumentParser()
 
@@ -153,14 +155,8 @@ def execute_train(gnn_args, args):
 
         loss_val = total_loss_multiple_batches(output, (node_labels['val'], graph_labels['val']), loss=args.loss,
                                                only_nodes=args.only_nodes, only_graph=args.only_graph)
-        if epoch % args.print_every == 0:
-            print('Epoch: {:04d}'.format(epoch + 1),
-                  'loss.train: {:.4f}'.format(loss_train.data.item()),
-                  'loss.val: {:.4f}'.format(loss_val),
-                  'time: {:.4f}s'.format(time.time() - t))
-            sys.stdout.flush()
 
-        return loss_val
+        return loss_train.data.item(), loss_val
 
     def compute_test():
         """
@@ -203,26 +199,27 @@ def execute_train(gnn_args, args):
     best_epoch = -1
 
     sys.stdout.flush()
+    with tqdm(range(args.epochs), leave=True, unit='epoch') as t:
+        for epoch in t:
+            loss_train, loss_val = train(epoch)
+            loss_values.append(loss_val)
+            t.set_description('loss.train: {:.4f}, loss.val: {:.4f}'.format(loss_train, loss_val))
+            if loss_values[-1] < best:
+                # save current model
+                torch.save(model.state_dict(), '{}.pkl'.format(epoch))
+                # remove previous model
+                if best_epoch >= 0:
+                    os.remove('{}.pkl'.format(best_epoch))
+                # update training variables
+                best = loss_values[-1]
+                best_epoch = epoch
+                bad_counter = 0
+            else:
+                bad_counter += 1
 
-    for epoch in range(args.epochs):
-        loss_values.append(train(epoch))
-
-        if loss_values[-1] < best:
-            # save current model
-            torch.save(model.state_dict(), '{}.pkl'.format(epoch))
-            # remove previous model
-            if best_epoch >= 0:
-                os.remove('{}.pkl'.format(best_epoch))
-            # update training variables
-            best = loss_values[-1]
-            best_epoch = epoch
-            bad_counter = 0
-        else:
-            bad_counter += 1
-
-        if bad_counter == args.patience:
-            print('Early stop at epoch {} (no improvement in last {} epochs)'.format(epoch + 1, bad_counter))
-            break
+            if bad_counter == args.patience:
+                print('Early stop at epoch {} (no improvement in last {} epochs)'.format(epoch + 1, bad_counter))
+                break
 
     print("Optimization Finished!")
     print("Total time elapsed: {:.4f}s".format(time.time() - t_total))

@@ -1,9 +1,9 @@
 import torch
 import torch.nn as nn
 
-from models.pna.aggregators import AGGREGATORS
-from models.pna.scalers import SCALERS
-from util.layers import FCLayer, MLP
+from models.pytorch.pna.aggregators import AGGREGATORS
+from models.pytorch.pna.scalers import SCALERS
+from models.layers import FCLayer, MLP
 
 
 class PNATower(nn.Module):

@@ -2,7 +2,7 @@ import types
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from util.layers import GRU, S2SReadout, MLP
+from models.layers import GRU, S2SReadout, MLP
 
 
 class GNN(nn.Module):

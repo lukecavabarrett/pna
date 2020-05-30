@@ -1,8 +1,8 @@
 from __future__ import division
 from __future__ import print_function
 
-from models.gcn.layer import GCNLayer
-from util.train import execute_train, build_arg_parser
+from models.pytorch.gcn.layer import GCNLayer
+from multitask_benchmark.util.train import execute_train, build_arg_parser
 
 # Training settings
 parser = build_arg_parser()

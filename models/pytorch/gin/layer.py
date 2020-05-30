@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from util.layers import MLP
+from models.layers import MLP
 
 
 class GINLayer(nn.Module):
