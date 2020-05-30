@@ -1,7 +1,6 @@
 from __future__ import division
 from __future__ import print_function
 
-import pickle
 import torch
 import torch.nn.functional as F
 
