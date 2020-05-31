@@ -4,6 +4,7 @@ from __future__ import print_function
 import torch
 import torch.nn.functional as F
 
+
 def load_dataset(data_path, loss, only_nodes, only_graph, print_baseline=True):
     with open(data_path, 'rb') as f:
         (adj, features, node_labels, graph_labels) = torch.load(f)
@@ -31,23 +32,6 @@ def load_dataset(data_path, loss, only_nodes, only_graph, print_baseline=True):
                                                      loss=loss, only_nodes=only_nodes, only_graph=only_graph))
 
     return adj, features, node_labels, graph_labels
-
-
-SUPPORTED_ACTIVATION_MAP = {'ReLU', 'Sigmoid', 'Tanh', 'ELU', 'SELU', 'GLU', 'LeakyReLU', 'Softplus', 'None'}
-
-
-def get_activation(activation):
-    """ returns the activation function represented by the input string """
-    if activation and callable(activation):
-        # activation is already a function
-        return activation
-    # search in SUPPORTED_ACTIVATION_MAP a torch.nn.modules.activation
-    activation = [x for x in SUPPORTED_ACTIVATION_MAP if activation.lower() == x.lower()]
-    assert len(activation) == 1 and isinstance(activation[0], str), 'Unhandled activation function'
-    activation = activation[0]
-    if activation.lower() == 'none':
-        return None
-    return vars(torch.nn.modules.activation)[activation]()
 
 
 def get_loss(loss, output, target):
