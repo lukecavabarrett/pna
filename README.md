@@ -8,10 +8,11 @@ We provide the implementation of the Principal Neighbourhood Aggregation (PNA) i
 
 - `models/` contains:
   - `/pytorch/` contains:
-     - the implementation of the aggregators, the scalers and the PNA layer (`/pna/`)
-     - the flexible GNN framework that can be used with any type of graph convolutions (`gnn_framework.py`)
-     - implementations of the other GNN models used for comparison in the paper, namely GCN, GAT, GIN and MPNN
+    - the implementation of the aggregators, the scalers and the PNA layer (`/pna/`)
+    - the flexible GNN framework that can be used with any type of graph convolutions (`gnn_framework.py`)
+    - implementations of the other GNN models used for comparison in the paper, namely GCN, GAT, GIN and MPNN
   - `/dgl/` TODO:
+    - `/layers/` contains: TODO:
   - general NN layers used by the various models (`layers.py`) 
 
 
@@ -24,7 +25,7 @@ The model specified by the arguments above uses the same architecture (represent
 ```
 @article{corso2020principal,
   title={Principal Neighbourhood Aggregation for Graph Nets},
-  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Li{\`o}, Pietro and Veli{\v{c}}kovi{\'c}, Petar},
+  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Lio, Pietro and Velickovic, Petar},
   journal={arXiv preprint arXiv:2004.05718},
   year={2020}
 }
