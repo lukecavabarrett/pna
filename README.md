@@ -24,7 +24,7 @@ The model specified by the arguments above uses the same architecture (represent
 ```
 @article{corso2020principal,
   title={Principal Neighbourhood Aggregation for Graph Nets},
-  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Li{\`o}, Pietro and Veli{\v{c}}kovi{\'c}, Petar},
+  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Lio, Pietro and Velickovic, Petar},
   journal={arXiv preprint arXiv:2004.05718},
   year={2020}
 }
