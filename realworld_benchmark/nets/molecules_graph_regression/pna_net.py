@@ -7,7 +7,7 @@ from models.dgl.mlp_readout_layer import MLPReadout
 
 """
     PNA: Principal Neighbourhood Aggregation 
-    Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Liò, Petar Veličković
+    Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Lio, Petar Velickovic
     https://arxiv.org/abs/2004.05718
     Architecture follows that in https://github.com/graphdeeplearning/benchmarking-gnns
 """
