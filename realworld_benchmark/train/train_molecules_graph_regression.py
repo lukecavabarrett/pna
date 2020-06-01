@@ -1,3 +1,7 @@
+# MIT License
+# Copyright (c) 2020 Vijay Prakash Dwivedi, Chaitanya K. Joshi, Thomas Laurent, Yoshua Bengio, Xavier Bresson
+
+
 """
     Utility functions for training one epoch 
     and evaluating one epoch

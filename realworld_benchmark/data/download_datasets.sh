@@ -1,3 +1,7 @@
+# MIT License
+# Copyright (c) 2020 Vijay Prakash Dwivedi, Chaitanya K. Joshi, Thomas Laurent, Yoshua Bengio, Xavier Bresson
+
+
 # Command to download dataset:
 #   bash script_download_all_datasets.sh
 
