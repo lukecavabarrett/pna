@@ -16,6 +16,9 @@ We provide the implementation of the Principal Neighbourhood Aggregation (PNA) i
 - `multi_task` contains various scripts to recreate the multi_task benchmark along with the files used to train the various models. In `multi_task/README.md` we detail the instructions for the generation and training hyperparameters tuned.
 - `real_world` contains various scripts from [Benchmarking GNNs](https://github.com/graphdeeplearning/benchmarking-gnns) to download the real-world benchmarks and train the PNA on them. In `real_world/README.md` we provide instructions for the generation and training hyperparameters tuned.
 
+![multitask results plots](./multitask_benchmark/multitask-plots.png)
+
+![real world results table](./realworld_benchmark/real-world.png)
 
 ## Reference
 ```
