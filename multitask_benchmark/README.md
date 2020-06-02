@@ -1,5 +1,7 @@
 # Multi-task benchmark
 
+![plots](./multitask-plots.png)
+
 ## Overview
 
 We provide the scripts for the generation and execution of the multi-task benchmark.
