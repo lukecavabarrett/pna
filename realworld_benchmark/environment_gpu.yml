@@ -1,3 +1,7 @@
+# MIT License
+# Copyright (c) 2020 Vijay Prakash Dwivedi, Chaitanya K. Joshi, Thomas Laurent, Yoshua Bengio, Xavier Bresson
+
+
 name: benchmark_gnn_gpu
 channels:
 - pytorch 
@@ -37,4 +41,3 @@ dependencies:
 - scikit-image=0.15.0
 - requests==2.22.0
 - tqdm==4.43.0
-- python-hydra

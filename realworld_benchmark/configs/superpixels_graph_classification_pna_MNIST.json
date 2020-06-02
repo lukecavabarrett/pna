@@ -16,10 +16,7 @@
     "min_lr": 1e-5,
     "weight_decay": 3e-6,
     "print_epoch_interval": 5,
-    "max_time": 48,
-    "hydra_checkpoint_every" : 20,
-    "hydra_eta_every" : 100,
-    "hydra" : true
+    "max_time": 48
   },
   "net_params": {
     "L": 4,
