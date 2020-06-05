@@ -20,7 +20,7 @@
   },
   "net_params": {
     "L": 4,
-    "hidden_dim": 100,
+    "hidden_dim": 75,
     "out_dim": 70,
     "residual": true,
     "edge_feat": false,
@@ -33,7 +33,7 @@
     "scalers": "identity amplification attenuation",
     "towers": 5,
     "divide_input_first": false,
-    "divide_input_middle": true,
+    "divide_input_last": true,
     "gru": false,
     "edge_dim": 0,
     "pretrans_layers" : 1,

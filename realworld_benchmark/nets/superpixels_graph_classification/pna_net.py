@@ -34,7 +34,7 @@ class PNANet(nn.Module):
         self.avg_d = net_params['avg_d']
         self.towers = net_params['towers']
         self.divide_input_first = net_params['divide_input_first']
-        self.divide_input_middle = net_params['divide_input_middle']
+        self.divide_input_last = net_params['divide_input_last']
         self.edge_feat = net_params['edge_feat']
         edge_dim = net_params['edge_dim']
         pretrans_layers = net_params['pretrans_layers']
@@ -58,7 +58,7 @@ class PNANet(nn.Module):
         self.layers.append(PNALayer(in_dim=hidden_dim, out_dim=out_dim, dropout=dropout,
                                     graph_norm=self.graph_norm, batch_norm=self.batch_norm,
                                     residual=self.residual, aggregators=self.aggregators, scalers=self.scalers,
-                                    avg_d=self.avg_d, towers=self.towers, divide_input=self.divide_input_middle,
+                                    avg_d=self.avg_d, towers=self.towers, divide_input=self.divide_input_last,
                                     edge_features=self.edge_feat, edge_dim=edge_dim,
                                     pretrans_layers=pretrans_layers, posttrans_layers=posttrans_layers))
 
