@@ -38,4 +38,6 @@ then run the training:
 python3 -m multitask_benchmark.train.pna --variable --fixed --gru --lr=0.003 --weight_decay=1e-6 --dropout=0.0 --epochs=10000 --patience=1000 --variable_conv_layers=N/2 --fc_layers=3 --hidden=16 --towers=4 --aggregators="mean max min std" --scalers="identity amplification attenuation" --data=multitask_benchmark/data/multitask_dataset.pkl
 ```
 
-The command above uses the hyperparameters tuned for the non-extrapolating dataset. For more details on how the hyperparameters were tuned and the results collected refer to the paper.
+The command above uses the hyperparameters tuned for the non-extrapolating dataset and the architecture outlined in the diagram below. For more details on the architecture, how the hyperparameters were tuned and the results collected refer to the [paper](https://arxiv.org/abs/2004.05718).
+
+![architecture](./architecture.png)
