@@ -119,7 +119,34 @@ def aggregate_softmin(X, adj, self_loop=False, device='cpu'):
     return -aggregate_softmax(-X, adj, self_loop=self_loop, device=device)
 
 
+def aggregate_moment(X, adj, self_loop=False, device='cpu', n=3):
+    # for each node (E[(X-E[X])^n])^{1/n}
+    # EPS is added to the absolute value of expectation before taking the nth root for stability
+
+    if self_loop:  # add self connections
+        (B, N, _) = adj.shape
+        adj = adj + torch.eye(N, device=device).unsqueeze(0)
+
+    D = torch.sum(adj, -1, keepdim=True)
+    X_mean = aggregate_mean(X, adj, self_loop=self_loop, device=device)
+    X_n = torch.div(torch.sum(torch.mul(torch.pow(X - X_mean.unsqueeze(2), n), adj.unsqueeze(-1)), dim=2), D)
+    rooted_X_n = torch.sign(X_n) * torch.pow(torch.abs(X_n) + EPS, 1. / n)
+    return rooted_X_n
+
+
+def aggregate_moment_3(X, adj, self_loop=False, device='cpu'):
+    return aggregate_moment(X, adj, self_loop=self_loop, device=device, n=3)
+
+
+def aggregate_moment_4(X, adj, self_loop=False, device='cpu'):
+    return aggregate_moment(X, adj, self_loop=self_loop, device=device, n=4)
+
+
+def aggregate_moment_5(X, adj, self_loop=False, device='cpu'):
+    return aggregate_moment(X, adj, self_loop=self_loop, device=device, n=5)
+
+
 AGGREGATORS = {'mean': aggregate_mean, 'sum': aggregate_sum, 'max': aggregate_max, 'min': aggregate_min,
                'identity': aggregate_identity, 'std': aggregate_std, 'var': aggregate_var,
-               'normalised_mean': aggregate_normalised_mean,
-               'softmax': aggregate_softmax, 'softmin': aggregate_softmin}
+               'normalised_mean': aggregate_normalised_mean, 'softmax': aggregate_softmax, 'softmin': aggregate_softmin,
+               'moment3': aggregate_moment_3, 'moment4': aggregate_moment_4, 'moment5': aggregate_moment_5}
