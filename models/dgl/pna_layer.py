@@ -80,13 +80,27 @@ class PNATower(nn.Module):
 
 
 class PNALayer(nn.Module):
-    """
-        Param: [in_dim, out_dim, n_heads]
-    """
 
     def __init__(self, in_dim, out_dim, aggregators, scalers, avg_d, dropout, graph_norm, batch_norm, towers=1,
                  pretrans_layers=1, posttrans_layers=1, divide_input=True, residual=False, edge_features=False,
                  edge_dim=0, parallel_towers=False):
+        """
+        :param in_dim:              size of the input per node
+        :param out_dim:             size of the output per node
+        :param aggregators:         set of aggregation function identifiers
+        :param scalers:             set of scaling functions identifiers
+        :param avg_d:               average degree of nodes in the training set, used by scalers to normalize
+        :param dropout:             dropout used
+        :param graph_norm:          whether to use graph normalisation
+        :param batch_norm:          whether to use batch normalisation
+        :param towers:              number of towers to use
+        :param pretrans_layers:     number of layers in the transformation before the aggregation
+        :param posttrans_layers:    number of layers in the transformation after the aggregation
+        :param divide_input:        whether the input features should be split between towers or not
+        :param residual:            whether to add a residual connection
+        :param edge_features:       whether to use the edge features
+        :param edge_dim:            size of the edge features
+        """
         super().__init__()
         assert ((not divide_input) or in_dim % towers == 0), "if divide_input is set the number of towers has to divide in_dim"
         assert (out_dim % towers == 0), "the number of towers has to divide the out_dim"

@@ -3,7 +3,7 @@ import dgl
 
 from realworld_benchmark.nets.gru import GRU
 from models.dgl.pna_layer import PNALayer
-from models.dgl.mlp_readout_layer import MLPReadout
+from realworld_benchmark.nets.mlp_readout_layer import MLPReadout
 
 """
     PNA: Principal Neighbourhood Aggregation 
