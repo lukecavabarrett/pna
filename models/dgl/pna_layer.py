@@ -83,7 +83,7 @@ class PNALayer(nn.Module):
 
     def __init__(self, in_dim, out_dim, aggregators, scalers, avg_d, dropout, graph_norm, batch_norm, towers=1,
                  pretrans_layers=1, posttrans_layers=1, divide_input=True, residual=False, edge_features=False,
-                 edge_dim=0, parallel_towers=False):
+                 edge_dim=0):
         """
         :param in_dim:              size of the input per node
         :param out_dim:             size of the output per node
@@ -116,7 +116,6 @@ class PNALayer(nn.Module):
         self.in_dim = in_dim
         self.out_dim = out_dim
         self.edge_features = edge_features
-        self.parallel_towers = parallel_towers
         self.residual = residual
         if in_dim != out_dim:
             self.residual = False
@@ -134,36 +133,13 @@ class PNALayer(nn.Module):
     def forward(self, g, h, e, snorm_n):
         h_in = h  # for residual connection
 
-        if self.parallel_towers:
-            class ResultWrapper(object):
-                def __init__(self):
-                    self.result = None
-
-            def compute_tower_threaded(tower, h_t, result_wrapper):
-                result_wrapper.result = tower(g, h_t, e, snorm_n)
-
-            # Parallelized the Forward Passes:
-            threads = []
-            h_cat = []
-            for n_tower, tower in enumerate(self.towers):
-                r = ResultWrapper()
-                t = threading.Thread(target=compute_tower_threaded, args=(
-                tower, h[:, n_tower * self.input_tower: (n_tower + 1) * self.input_tower] if self.divide_input else h,
-                r))
-                t.start()
-                threads.append(t)
-                h_cat.append(r)
-            for t in threads:
-                t.join()
-            h_cat = torch.cat([r.result for r in h_cat], dim=1)
+        if self.divide_input:
+            h_cat = torch.cat(
+                [tower(g, h[:, n_tower * self.input_tower: (n_tower + 1) * self.input_tower],
+                       e, snorm_n)
+                 for n_tower, tower in enumerate(self.towers)], dim=1)
         else:
-            if self.divide_input:
-                h_cat = torch.cat(
-                    [tower(g, h[:, n_tower * self.input_tower: (n_tower + 1) * self.input_tower],
-                           e, snorm_n)
-                     for n_tower, tower in enumerate(self.towers)], dim=1)
-            else:
-                h_cat = torch.cat([tower(g, h, e, snorm_n) for tower in self.towers], dim=1)
+            h_cat = torch.cat([tower(g, h, e, snorm_n) for tower in self.towers], dim=1)
 
         h_out = self.mixing_network(h_cat)
 
