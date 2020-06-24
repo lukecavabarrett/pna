@@ -18,6 +18,18 @@ These benchmarks use the DGL version of PNA (`../models/dgl`)
 
 ## Test run
 
+### Benchmark Setup
+
+[Follow these instructions](./docs/setup.md) to install the benchmark and setup the environment.
+
+### Run model training
+```
+# at the root of the repo
+cd realworld_benchmark
+python { main_molecules.py | main_molecules.py } [--param=value ...] --dataset { ZINC | MNIST | CIFAR10 } --gpu_id g͟p͟u͟_͟i͟d͟ --config c͟͟o͟n͟f͟i͟g͟_͟f͟i͟l͟e͟
+
+```
+
 
 ## Tuned hyperparameters
 
