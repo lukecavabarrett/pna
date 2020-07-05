@@ -2,6 +2,8 @@
 
 Principal Neighbourhood Aggregation for Graph Nets [arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718)
 
+![symbol](./multitask_benchmark/images/symbol.png)
+
 ## Overview
 
 We provide the implementation of the Principal Neighbourhood Aggregation (PNA) in PyTorch, DGL and PyTorch Geometric frameworks, along with scripts to generate and run the multitask benchmarks, scripts for running real-world benchmarks, a flexible PyTorch GNN framework and implementations of the other models used for comparison. The repository is organised as follows:
@@ -17,9 +19,7 @@ We provide the implementation of the Principal Neighbourhood Aggregation (PNA) i
 - `multi_task` contains various scripts to recreate the multi_task benchmark along with the files used to train the various models. In `multi_task/README.md` we detail the instructions for the generation and training hyperparameters tuned.
 - `real_world` contains various scripts from [Benchmarking GNNs](https://github.com/graphdeeplearning/benchmarking-gnns) to download the real-world benchmarks and train the PNA on them. In `real_world/README.md` we provide instructions for the generation and training hyperparameters tuned.
 
-![multitask results plots](./multitask_benchmark/multitask-plots.png)
-
-![real world results table](./realworld_benchmark/real-world.png)
+![results](./multitask_benchmark/images/results.png)
 
 ## Reference
 ```

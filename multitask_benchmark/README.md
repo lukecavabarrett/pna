@@ -1,6 +1,6 @@
 # Multi-task benchmark
 
-![plots](./multitask-plots.png)
+![plots](./images/multitask_results.png)
 
 ## Overview
 
@@ -40,4 +40,4 @@ python3 -m multitask_benchmark.train.pna --variable --fixed --gru --lr=0.003 --w
 
 The command above uses the hyperparameters tuned for the non-extrapolating dataset and the architecture outlined in the diagram below. For more details on the architecture, how the hyperparameters were tuned and the results collected refer to our [paper](https://arxiv.org/abs/2004.05718).
 
-![architecture](./architecture.png)
+![architecture](images/architecture.png)

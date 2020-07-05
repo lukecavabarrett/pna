@@ -1,6 +1,6 @@
 # Real-world benchmarks
 
-![plots](./real-world.png)
+![plots](../multitask_benchmark/images/realworld_results.png)
 
 ## Overview
 
@@ -12,9 +12,6 @@ We provide the scripts for the download and execution of the real-world benchmar
 - `train` contains the training scripts.
   
 These benchmarks use the DGL version of PNA (`../models/dgl`)
-
-## Dependencies
-
 
 ## Test run
 
