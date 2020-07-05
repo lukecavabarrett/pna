@@ -1,6 +1,6 @@
 # Real-world benchmarks
 
-![plots](../multitask_benchmark/images/realworld_results.png)
+<img src="https://raw.githubusercontent.com/lukecavabarrett/pna/master/multitask_benchmark/images/realworld_results.png" alt="Real world results" width="500"/>
 
 ## Overview
 
@@ -23,7 +23,7 @@ These benchmarks use the DGL version of PNA (`../models/dgl`)
 ```
 # at the root of the repo
 cd realworld_benchmark
-python { main_molecules.py | main_molecules.py } [--param=value ...] --dataset { ZINC | MNIST | CIFAR10 } --gpu_id gpu_id --config config_file
+python { main_molecules.py | main_superpixels.py } [--param=value ...] --dataset { ZINC | MNIST | CIFAR10 } --gpu_id gpu_id --config config_file
 ```
 
 

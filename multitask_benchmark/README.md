@@ -1,6 +1,6 @@
 # Multi-task benchmark
 
-![plots](./images/multitask_results.png)
+<img src="https://raw.githubusercontent.com/lukecavabarrett/pna/master/multitask_benchmark/images/multitask_results.png" alt="Real world results" width="500"/>
 
 ## Overview
 
