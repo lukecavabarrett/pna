@@ -33,12 +33,12 @@ You can find below the hyperparameters we used for our experiments. In general, 
 
 ```
 For the leaderboard (2nd version of the datasets - 400/500k parameters)
---- PNA ---
 
 # ZINC
-python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=85 --out_dim=85 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --seed=1 --lr_schedule_patience=20
-python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=70 --out_dim=70 --residual=True --edge_feat=True --edge_dim=40 --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
-
+PNA:
+python main_molecules.py --weight_decay=3e-6 --L=16 --hidden_dim=70 --out_dim=70 --residual=True --edge_feat=True --edge_dim=40 --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
+MPNN (sum/max):
+python main_molecules.py --weight_decay=3e-6 --L=16 --hidden_dim=110 --out_dim=110 --residual=True --edge_feat=True --edge_dim=40 --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
 
 
 For the paper (1st version of the datasets - 100k parameters)
@@ -70,5 +70,20 @@ python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=95 --out_dim=9
 # MNIST
 python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=95 --out_dim=90 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.1 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset MNIST --gpu_id 0 --config "configs/superpixels_graph_classification_pna_MNIST.json" --lr_schedule_patience=5
 python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=95 --out_dim=90 --residual=True --edge_feat=True --edge_dim=50 --readout=sum --in_feat_dropout=0.0 --dropout=0.3 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset MNIST --gpu_id 0 --config "configs/superpixels_graph_classification_pna_MNIST.json" --lr_schedule_patience=5
+
+
+--- MPNN (sum/max) ---
+
+# ZINC
+python main_molecules.py --weight_decay=1e-5 --L=4 --hidden_dim=110 --out_dim=80 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=False --divide_input_last=True  --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=5
+python main_molecules.py --weight_decay=3e-6 --L=4 --hidden_dim=100 --out_dim=70 --residual=True --edge_dim=50 --edge_feat=True --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=False --divide_input_last=True  --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
+
+# CIFAR10
+python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=110 --out_dim=90 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.2 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset CIFAR10 --gpu_id 0 --config "configs/superpixels_graph_classification_pna_CIFAR10.json" --lr_schedule_patience=5
+python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=110 --out_dim=90 --residual=True --edge_feat=True --edge_dim=20 --readout=sum --in_feat_dropout=0.0 --dropout=0.2 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset CIFAR10 --gpu_id 0 --config "configs/superpixels_graph_classification_pna_CIFAR10.json" --lr_schedule_patience=5
+
+# MNIST
+python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=110 --out_dim=90 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.2 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset MNIST --gpu_id 0 --config "configs/superpixels_graph_classification_pna_MNIST.json" --lr_schedule_patience=5
+python main_superpixels.py --weight_decay=3e-6 --L=4 --hidden_dim=110 --out_dim=90 --residual=True --edge_feat=True --edge_dim=20 --readout=sum --in_feat_dropout=0.0 --dropout=0.2 --graph_norm=True --batch_norm=True --aggregators="sum"/"max" --scalers="identity" --towers=5 --divide_input_first=True --divide_input_last=False  --dataset MNIST --gpu_id 0 --config "configs/superpixels_graph_classification_pna_MNIST.json" --lr_schedule_patience=5
 
 ```
