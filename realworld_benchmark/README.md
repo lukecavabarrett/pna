@@ -36,8 +36,8 @@ For the leaderboard (2nd version of the datasets - 400/500k parameters)
 --- PNA ---
 
 # ZINC
-python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=85 --out_dim=85 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_middle=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --seed=1 --lr_schedule_patience=20
-python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=70 --out_dim=70 --residual=True --edge_feat=True --edge_dim=40 --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_middle=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
+python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=85 --out_dim=85 --residual=True --edge_feat=False --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --seed=1 --lr_schedule_patience=20
+python main_molecules_hydra.py --weight_decay=3e-6 --L=16 --hidden_dim=70 --out_dim=70 --residual=True --edge_feat=True --edge_dim=40 --readout=sum --in_feat_dropout=0.0 --dropout=0.0 --graph_norm=True --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --towers=5 --pretrans_layers=1 --posttrans_layers=1 --divide_input_first=False --divide_input_last=True --dataset ZINC --gpu_id 0 --config "configs/molecules_graph_regression_pna_ZINC.json" --lr_schedule_patience=20
 
 
 
