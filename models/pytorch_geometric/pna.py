@@ -1,109 +1,163 @@
+from typing import Optional, List, Dict
+from torch_geometric.typing import Adj, OptTensor
+
 import torch
-from torch import nn
+from torch import Tensor
+from torch.nn import ModuleList, Sequential, Linear, ReLU
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
+from torch_geometric.utils import degree
 
 from models.pytorch_geometric.aggregators import AGGREGATORS
-from models.pytorch_geometric.scalers import get_degree, SCALERS
-from models.layers import MLP, FCLayer
+from models.pytorch_geometric.scalers import SCALERS
 
-"""
-    PNA: Principal Neighbourhood Aggregation 
-    Gabriele Corso, Luca Cavalleri, Dominique Beaini, Pietro Lio, Petar Velickovic
-    https://arxiv.org/abs/2004.05718
-"""
 
+# Implemented with the help of Matthias Fey, author of PyTorch Geometric
+# for an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
 
 class PNAConv(MessagePassing):
+    r"""The Principal Neighbourhood Aggregation graph convolution operator
+    from the `"Principal Neighbourhood Aggregation for Graph Nets"
+    <https://arxiv.org/abs/2004.05718>`_ paper
+        .. math::
+            \bigoplus = \underbrace{\begin{bmatrix}I \\ S(D, \alpha=1) \\
+            S(D, \alpha=-1) \end{bmatrix} }_{\text{scalers}}
+            \otimes \underbrace{\begin{bmatrix} \mu \\ \sigma \\ \max \\ \min
+            \end{bmatrix}}_{\text{aggregators}},
+        in:
+        .. math::
+            X_i^{(t+1)} = U \left( X_i^{(t)}, \underset{(j,i) \in E}{\bigoplus}
+            M \left( X_i^{(t)}, X_j^{(t)} \right) \right)
+        where :math:`M` and :math:`U` denote the MLP referred to with pretrans
+        and posttrans respectively.
+        Args:
+            in_channels (int): Size of each input sample.
+            out_channels (int): Size of each output sample.
+            aggregators (list of str): Set of aggregation function identifiers,
+                namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+                :obj:`"var"` and :obj:`"std"`.
+            scalers: (list of str): Set of scaling function identifiers, namely
+                :obj:`"identity"`, :obj:`"amplification"`,
+                :obj:`"attenuation"`, :obj:`"linear"` and
+                :obj:`"inverse_linear"`.
+            deg (Tensor): Histogram of in-degrees of nodes in the training set,
+                used by scalers to normalize.
+            edge_dim (int, optional): Edge feature dimensionality (in case
+                there are any). (default :obj:`None`)
+            towers (int, optional): Number of towers (default: :obj:`1`).
+            pre_layers (int, optional): Number of transformation layers before
+                aggregation (default: :obj:`1`).
+            post_layers (int, optional): Number of transformation layers after
+                aggregation (default: :obj:`1`).
+            divide_input (bool, optional): Whether the input features should
+                be split between towers or not (default: :obj:`False`).
+            **kwargs (optional): Additional arguments of
+                :class:`torch_geometric.nn.conv.MessagePassing`.
+        """
+    def __init__(self, in_channels: int, out_channels: int,
+                 aggregators: List[str], scalers: List[str], deg: Tensor,
+                 edge_dim: Optional[int] = None, towers: int = 1,
+                 pre_layers: int = 1, post_layers: int = 1,
+                 divide_input: bool = False, **kwargs):
 
-    def __init__(self, in_channels, out_channels, aggregators, scalers, avg_d, towers=1,
-                 pretrans_layers=1, posttrans_layers=1, divide_input=False, **kwargs):
-        """
-        :param in_channels:         size of the input per node
-        :param in_channels:         size of the output per node
-        :param aggregators:         set of aggregation function identifiers
-        :param scalers:             set of scaling functions identifiers
-        :param avg_d:               average degree of nodes in the training set, used by scalers to normalize
-        :param towers:              number of towers to use
-        :param pretrans_layers:     number of layers in the transformation before the aggregation
-        :param posttrans_layers:    number of layers in the transformation after the aggregation
-        :param divide_input:        whether the input features should be split between towers or not
-        """
-        super(PNAConv, self).__init__(aggr=None, **kwargs)
-        assert ((not divide_input) or in_channels % towers == 0), "if divide_input is set the number of towers has to divide in_features"
-        assert (out_channels % towers == 0), "the number of towers has to divide the out_features"
+        super(PNAConv, self).__init__(aggr=None, node_dim=0, **kwargs)
+
+        if divide_input:
+            assert in_channels % towers == 0
+        assert out_channels % towers == 0
 
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.towers = towers
-        self.divide_input = divide_input
-        self.input_tower = self.in_channels // towers if divide_input else self.in_channels
-        self.output_tower = self.out_channels // towers
-
-        # retrieve the aggregators and scalers functions
         self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
         self.scalers = [SCALERS[scale] for scale in scalers]
-        self.avg_d = avg_d
+        self.edge_dim = edge_dim
+        self.towers = towers
+        self.divide_input = divide_input
 
-        self.edge_encoder = FCLayer(in_size=in_channels, out_size=self.input_tower, activation='none')
+        self.F_in = in_channels // towers if divide_input else in_channels
+        self.F_out = self.out_channels // towers
 
-        # build pre-transformations and post-transformation MLP for each tower
-        self.pretrans = nn.ModuleList()
-        self.posttrans = nn.ModuleList()
+        deg = deg.to(torch.float)
+        self.avg_deg: Dict[str, float] = {
+            'lin': deg.mean().item(),
+            'log': (deg + 1).log().mean().item(),
+            'exp': deg.exp().mean().item(),
+        }
+
+        if self.edge_dim is not None:
+            self.edge_encoder = Linear(edge_dim, self.F_in)
+
+        self.pre_nns = ModuleList()
+        self.post_nns = ModuleList()
         for _ in range(towers):
-            self.pretrans.append(
-                MLP(in_size=3 * self.input_tower, hidden_size=self.input_tower, out_size=self.input_tower,
-                    layers=pretrans_layers, mid_activation='relu', last_activation='none'))
-            self.posttrans.append(
-                MLP(in_size=(len(self.aggregators) * len(self.scalers) + 1) * self.input_tower, hidden_size=self.output_tower,
-                    out_size=self.output_tower, layers=posttrans_layers, mid_activation='relu', last_activation='none'))
+            modules = [Linear((3 if edge_dim else 2) * self.F_in, self.F_in)]
+            for _ in range(pre_layers - 1):
+                modules += [ReLU()]
+                modules += [Linear(self.F_in, self.F_in)]
+            self.pre_nns.append(Sequential(*modules))
 
-        self.mixing_network = FCLayer(self.out_channels, self.out_channels, activation='LeakyReLU')
+            in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
+            modules = [Linear(in_channels, self.F_out)]
+            for _ in range(pre_layers - 1):
+                modules += [ReLU()]
+                modules += [Linear(self.F_out, self.F_out)]
+            self.post_nns.append(Sequential(*modules))
 
-    def forward(self, x, edge_index, edge_attr):
-        edge_embedding = self.edge_encoder(edge_attr)
-        return self.propagate(edge_index, x=x, edge_attr=edge_embedding)
+        self.lin = Linear(out_channels, out_channels)
 
-    def message(self, x_i, x_j, edge_attr):
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        if self.edge_dim is not None:
+            self.edge_encoder.reset_parameters()
+        for nn in self.pre_nns:
+            reset(nn)
+        for nn in self.post_nns:
+            reset(nn)
+        self.lin.reset_parameters()
+
+    def forward(self, x: Tensor, edge_index: Adj,
+                edge_attr: OptTensor = None) -> Tensor:
+
         if self.divide_input:
-            # divide the features among the towers
-            x_i = x_i.view(-1, self.towers, self.input_tower)
-            x_j = x_j.view(-1, self.towers, self.input_tower)
+            x = x.view(-1, self.towers, self.F_in)
         else:
-            # repeat the features over the towers
-            x_i = x_i.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
-            x_j = x_j.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
-        edge_attr = edge_attr.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
+            x = x.view(-1, 1, self.F_in).repeat(1, self.towers, 1)
 
-        # pre-transformation
-        h_cat = torch.cat([x_i, x_j, edge_attr], dim=-1)
-        y = torch.zeros((h_cat.shape[0], self.towers, self.input_tower), device=x_i.device)
-        for tower, trans in enumerate(self.pretrans):
-            y[:, tower, :] = trans(h_cat[:, tower, :])
-        return y
+        # propagate_type: (x: Tensor, edge_attr: OptTensor)
+        out = self.propagate(edge_index, x=x, edge_attr=edge_attr, size=None)
 
-    def aggregate(self, inputs, index, dim_size=None):
-        D = get_degree(inputs, index, self.node_dim, dim_size)
+        out = torch.cat([x, out], dim=-1)
+        outs = [nn(out[:, i]) for i, nn in enumerate(self.post_nns)]
+        out = torch.cat(outs, dim=1)
 
-        # aggregators
-        inputs = torch.cat([aggregator(inputs, index, dim=self.node_dim, dim_size=dim_size)
-                            for aggregator in self.aggregators], dim=-1)
-        # scalers
-        return torch.cat([scaler(inputs, D, self.avg_d) for scaler in self.scalers], dim=-1)
+        return self.lin(out)
 
-    def update(self, aggr_out, x):
-        # post-transformation
-        if self.divide_input:
-            x = x.view(-1, self.towers, self.input_tower)
+    def message(self, x_i: Tensor, x_j: Tensor,
+                edge_attr: OptTensor) -> Tensor:
+
+        h: Tensor = x_i  # Dummy.
+        if edge_attr is not None:
+            edge_attr = self.edge_encoder(edge_attr)
+            edge_attr = edge_attr.view(-1, 1, self.F_in)
+            edge_attr = edge_attr.repeat(1, self.towers, 1)
+            h = torch.cat([x_i, x_j, edge_attr], dim=-1)
         else:
-            x = x.view(-1, 1, self.input_tower).repeat(1, self.towers, 1)
-        aggr_cat = torch.cat([x, aggr_out], dim=-1)
-        y = torch.zeros((aggr_cat.shape[0], self.towers, self.output_tower), device=x.device)
-        for tower, trans in enumerate(self.posttrans):
-            y[:, tower, :] = trans(aggr_cat[:, tower, :])
+            h = torch.cat([x_i, x_j], dim=-1)
 
-        # concatenate and mix all the towers
-        y = y.view(-1, self.towers * self.output_tower)
-        y = self.mixing_network(y)
+        hs = [nn(h[:, i]) for i, nn in enumerate(self.pre_nns)]
+        return torch.stack(hs, dim=1)
 
-        return y
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  dim_size: Optional[int] = None) -> Tensor:
+        outs = [aggr(inputs, index, dim_size) for aggr in self.aggregators]
+        out = torch.cat(outs, dim=-1)
 
+        deg = degree(index, dim_size, dtype=inputs.dtype).view(-1, 1, 1)
+        outs = [scaler(out, deg, self.avg_deg) for scaler in self.scalers]
+        return torch.cat(outs, dim=-1)
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}, towers={self.towers}, dim={self.dim})')
+        raise NotImplementedError

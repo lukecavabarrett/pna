@@ -1,37 +1,42 @@
 import torch
-from torch_scatter import scatter_sum, scatter_mean, scatter_max, scatter_min
+from torch import Tensor
+from torch_scatter import scatter
+from typing import Optional
 
-EPS = 1e-5
+# Implemented with the help of Matthias Fey, author of PyTorch Geometric
+# for an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
 
-
-def aggregate_sum(src, index, dim, dim_size):
-    return scatter_sum(src=src, index=index, dim=dim, out=None, dim_size=dim_size)
-
-
-def aggregate_mean(src, index, dim, dim_size):
-    return scatter_mean(src=src, index=index, dim=dim, out=None, dim_size=dim_size)
+def aggregate_sum(src: Tensor, index: Tensor, dim_size: Optional[int]):
+    return scatter(src, index, 0, None, dim_size, reduce='sum')
 
 
-def aggregate_max(src, index, dim, dim_size):
-    return scatter_max(src=src, index=index, dim=dim, out=None, dim_size=dim_size)[0]
+def aggregate_mean(src: Tensor, index: Tensor, dim_size: Optional[int]):
+    return scatter(src, index, 0, None, dim_size, reduce='mean')
 
 
-def aggregate_min(src, index, dim, dim_size):
-    return scatter_min(src=src, index=index, dim=dim, out=None, dim_size=dim_size)[0]
+def aggregate_min(src: Tensor, index: Tensor, dim_size: Optional[int]):
+    return scatter(src, index, 0, None, dim_size, reduce='min')
 
 
-def aggregate_var(src, index, dim, dim_size):
-    mean = aggregate_mean(src, index, dim, dim_size)
-    mean_squares = aggregate_mean(src * src, index, dim, dim_size)
-    var = mean_squares - mean * mean
-    return var
+def aggregate_max(src: Tensor, index: Tensor, dim_size: Optional[int]):
+    return scatter(src, index, 0, None, dim_size, reduce='max')
 
 
-def aggregate_std(src, index, dim, dim_size):
-    var = aggregate_var(src, index, dim, dim_size)
-    out = torch.sqrt(torch.relu(var) + EPS)
-    return out
+def aggregate_var(src, index, dim_size):
+    mean = aggregate_mean(src, index, dim_size)
+    mean_squares = aggregate_mean(src * src, index, dim_size)
+    return mean_squares - mean * mean
 
 
-AGGREGATORS = {'mean': aggregate_mean, 'sum': aggregate_sum, 'max': aggregate_max, 'min': aggregate_min,
-               'std': aggregate_std, 'var': aggregate_var}
+def aggregate_std(src, index, dim_size):
+    return torch.sqrt(torch.relu(aggregate_var(src, index, dim_size)) + 1e-5)
+
+
+AGGREGATORS = {
+    'sum': aggregate_sum,
+    'mean': aggregate_mean,
+    'min': aggregate_min,
+    'max': aggregate_max,
+    'var': aggregate_var,
+    'std': aggregate_std,
+}
