@@ -1,6 +1,6 @@
 # Principal Neighbourhood Aggregation
 
-Implementation of Principal Neighbourhood Aggregation for Graph Nets [arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718) in PyTorch, DGL and PyTorch Geometric
+Implementation of Principal Neighbourhood Aggregation for Graph Nets [arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718) in PyTorch, DGL and PyTorch Geometric.
 
 ![symbol](./multitask_benchmark/images/symbol.png)
 
