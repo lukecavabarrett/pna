@@ -12,8 +12,7 @@ from models.pytorch_geometric.aggregators import AGGREGATORS
 from models.pytorch_geometric.scalers import SCALERS
 
 
-# Implemented with the help of Matthias Fey, author of PyTorch Geometric
-# for an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
+# For an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
 
 class PNAConv(MessagePassing):
     r"""The Principal Neighbourhood Aggregation graph convolution operator

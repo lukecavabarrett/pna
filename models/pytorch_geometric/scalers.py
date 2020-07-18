@@ -2,8 +2,7 @@ import torch
 from torch import Tensor
 from typing import Dict
 
-# Implemented with the help of Matthias Fey, author of PyTorch Geometric
-# for an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
+# For an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
 
 def scale_identity(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
     return src

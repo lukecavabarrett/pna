@@ -3,8 +3,7 @@ from torch import Tensor
 from torch_scatter import scatter
 from typing import Optional
 
-# Implemented with the help of Matthias Fey, author of PyTorch Geometric
-# for an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
+# For an example see https://github.com/rusty1s/pytorch_geometric/blob/master/examples/pna.py
 
 def aggregate_sum(src: Tensor, index: Tensor, dim_size: Optional[int]):
     return scatter(src, index, 0, None, dim_size, reduce='sum')
