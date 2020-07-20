@@ -23,10 +23,7 @@ class PNATower(nn.Module):
         self.batch_norm = batch_norm
         self.edge_features = edge_features
 
-        self.fc = nn.Linear(in_dim, out_dim, bias=False)
-        self.attn_fc = nn.Linear(2 * out_dim, 1, bias=False)
         self.batchnorm_h = nn.BatchNorm1d(out_dim)
-
         self.aggregators = aggregators
         self.scalers = scalers
         self.pretrans = MLP(in_size=2 * in_dim + (edge_dim if edge_features else 0), hidden_size=in_dim,
@@ -147,6 +144,5 @@ class PNALayer(nn.Module):
             h_out = h_in + h_out  # residual connection
         return h_out
 
-
-def __repr__(self):
-    return '{}(in_channels={}, out_channels={})'.format(self.__class__.__name__, self.in_dim, self.out_dim)
+    def __repr__(self):
+        return '{}(in_channels={}, out_channels={})'.format(self.__class__.__name__, self.in_dim, self.out_dim)
