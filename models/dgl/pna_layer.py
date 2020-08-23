@@ -1,7 +1,7 @@
-import threading
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import dgl.function as fn
 
 from .aggregators import AGGREGATORS
 from models.layers import MLP, FCLayer
@@ -143,6 +143,70 @@ class PNALayer(nn.Module):
         if self.residual:
             h_out = h_in + h_out  # residual connection
         return h_out
+
+    def __repr__(self):
+        return '{}(in_channels={}, out_channels={})'.format(self.__class__.__name__, self.in_dim, self.out_dim)
+
+
+class PNASimpleLayer(nn.Module):
+
+    def __init__(self, in_dim, out_dim, aggregators, scalers, avg_d, dropout, batch_norm, activation,
+                posttrans_layers=1):
+        """
+        A simpler version of PNA layer that simply aggregates the neighbourhood (similar to GCN and GIN),
+        without using the pretransformation or the tower mechanisms of the MPNN. It does not support edge features.
+
+        :param in_dim:              size of the input per node
+        :param out_dim:             size of the output per node
+        :param aggregators:         set of aggregation function identifiers
+        :param scalers:             set of scaling functions identifiers
+        :param avg_d:               average degree of nodes in the training set, used by scalers to normalize
+        :param dropout:             dropout used
+        :param batch_norm:          whether to use batch normalisation
+        :param posttrans_layers:    number of layers in the transformation after the aggregation
+        """
+        super().__init__()
+
+        # retrieve the aggregators and scalers functions
+        aggregators = [AGGREGATORS[aggr] for aggr in aggregators.split()]
+        scalers = [SCALERS[scale] for scale in scalers.split()]
+
+        self.aggregators = aggregators
+        self.scalers = scalers
+        self.in_dim = in_dim
+        self.out_dim = out_dim
+        self.dropout = dropout
+        self.batch_norm = batch_norm
+
+        self.batchnorm_h = nn.BatchNorm1d(out_dim)
+        self.activation = activation
+        self.posttrans = MLP(in_size=(len(aggregators) * len(scalers) + 1) * in_dim, hidden_size=out_dim,
+                            out_size=out_dim, layers=posttrans_layers,
+                            mid_activation=activation, last_activation=activation,
+                            dropout=dropout, mid_b_norm=batch_norm, last_b_norm=batch_norm)
+        self.avg_d = avg_d
+
+
+    def reduce_func(self, nodes):
+        h = nodes.mailbox['m']
+        D = h.shape[-2]
+        h = torch.cat([aggregate(h) for aggregate in self.aggregators], dim=1)
+        h = torch.cat([scale(h, D=D, avg_d=self.avg_d) for scale in self.scalers], dim=1)
+        return {'h': h}
+
+
+    def forward(self, g, h):
+        g.ndata['h'] = h
+
+        # aggregation
+        g.update_all(fn.copy_u('h', 'm'), self.reduce_func)
+        h = torch.cat([h, g.ndata['h']], dim=1)
+
+        # posttransformation
+        h = self.posttrans(h)
+
+        return h
+
 
     def __repr__(self):
         return '{}(in_channels={}, out_channels={})'.format(self.__class__.__name__, self.in_dim, self.out_dim)
