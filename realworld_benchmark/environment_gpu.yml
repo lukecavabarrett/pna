@@ -21,7 +21,7 @@ dependencies:
 - numpy=1.16.4
 - matplotlib=3.1.0
 - tensorboard=1.14.0
-- tensorboardx=1.8S
+- tensorboardx=1.8
 - absl-py
 - networkx=2.3
 - scikit-learn=0.21.2
