@@ -16,7 +16,7 @@ curl -o ~/miniconda.sh -O https://repo.continuum.io/miniconda/Miniconda3-latest-
 curl -o ~/miniconda.sh -O https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
 
 chmod +x ~/miniconda.sh    
-./miniconda.sh  
+~/miniconda.sh  
 
 source ~/.bashrc          # For Linux
 source ~/.bash_profile    # For OSX
