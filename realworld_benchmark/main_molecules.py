@@ -26,9 +26,9 @@ class DotDict(dict):
 """
     IMPORTING CUSTOM MODULES/METHODS
 """
-from realworld_benchmark.nets.molecules_graph_regression.pna_net import PNANet
-from realworld_benchmark.data.molecules import MoleculeDataset  # import dataset
-from realworld_benchmark.train.train_molecules_graph_regression import train_epoch, evaluate_network
+from nets.molecules_graph_regression.pna_net import PNANet
+from data.molecules import MoleculeDataset  # import dataset
+from train.train_molecules_graph_regression import train_epoch, evaluate_network
 
 """
     GPU Setup
