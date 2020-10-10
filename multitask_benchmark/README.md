@@ -14,19 +14,17 @@ We provide the scripts for the generation and execution of the multi-task benchm
   - general training and evaluation procedures (`train.py`).
 - `train` contains a script for each model which sets up the command line parameters and initiates the training procedure. 
   
-This benchmark uses the PyTorch version of PNA (`../models/pytorch/pna`)
+This benchmark uses the PyTorch version of PNA (`../models/pytorch/pna`). Below you can find the instructions on how to create the dataset and run the models, these are also available in this [notebook](https://colab.research.google.com/drive/17NntHxoKQzpKmi8siMOLP9WfANlwbW8S?usp=sharing).
 
 ## Dependencies
 Install PyTorch from the [official website](https://pytorch.org/). The code was tested over PyTorch 1.4.
 
-Then install the other dependencies:
+Move to the source of the repository before running the following. Then install the other dependencies:
 ```
 pip3 install -r multitask_benchmark/requirements.txt
 ```
 
 ## Test run
-
-Move to the source of the repository before running the following.
 
 Generate the benchmark dataset (add `--extrapolation` for multiple test sets of different sizes):
 ```
