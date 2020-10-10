@@ -11,7 +11,7 @@ We provide the scripts for the download and execution of the real-world benchmar
 - `nets` contains the architectures that were used with the PNA in the benchmarks;
 - `train` contains the training scripts.
   
-These benchmarks use the DGL version of PNA (`../models/dgl`)
+These benchmarks use the DGL version of PNA (`../models/dgl`). Below you can find the instructions on how to create the dataset and run the models, these are also available in more details this [notebook](https://colab.research.google.com/drive/1RnV4MBjCl98eubAGpEF-eXdAW5mTP3h3?usp=sharing).
 
 ## Test run
 
