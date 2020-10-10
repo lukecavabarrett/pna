@@ -71,7 +71,8 @@ class DatasetMultitask:
                     set_features[batch].append(features)
                     set_nodes_labels[batch].append(node_labels)
                     set_graph_labels[batch].append(graph_labels)
-
+                    
+            t.close()
             self.adj[dset] = [torch.from_numpy(np.asarray(adjs)).float() for adjs in set_adj]
             self.features[dset] = [torch.from_numpy(np.asarray(fs)).float() for fs in set_features]
             self.nodes_labels[dset] = [torch.from_numpy(np.asarray(nls)).float() for nls in set_nodes_labels]
