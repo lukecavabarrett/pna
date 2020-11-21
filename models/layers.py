@@ -163,7 +163,7 @@ class FCLayer(nn.Module):
         self.dropout = None
         self.b_norm = None
         if dropout:
-            self.dropout = nn.Dropout(p=dropout, device=device)
+            self.dropout = nn.Dropout(p=dropout)
         if b_norm:
             self.b_norm = nn.BatchNorm1d(out_size).to(device)
         self.activation = get_activation(activation)

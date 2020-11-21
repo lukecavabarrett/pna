@@ -21,14 +21,11 @@ def train_epoch_sparse(model, optimizer, device, data_loader, epoch):
     epoch_train_ROC = 0
     list_scores = []
     list_labels = []
-    for iter, (batch_graphs, batch_labels, batch_snorm_n, batch_snorm_e) in enumerate(data_loader):
+    for iter, (batch_graphs, batch_labels) in enumerate(data_loader):
         batch_x = batch_graphs.ndata['feat'].to(device)  # num x feat
-        batch_e = batch_graphs.edata['feat'].to(device)
-        batch_snorm_e = batch_snorm_e.to(device)
-        batch_snorm_n = batch_snorm_n.to(device)
         batch_labels = batch_labels.to(device)
         optimizer.zero_grad()
-        batch_scores = model.forward(batch_graphs, batch_x, batch_e, batch_snorm_n, batch_snorm_e)
+        batch_scores = model.forward(batch_graphs, batch_x)
         loss = model.loss(batch_scores, batch_labels)
         loss.backward()
         optimizer.step()
@@ -51,13 +48,10 @@ def evaluate_network_sparse(model, device, data_loader, epoch):
     with torch.no_grad():
         list_scores = []
         list_labels = []
-        for iter, (batch_graphs, batch_labels, batch_snorm_n, batch_snorm_e) in enumerate(data_loader):
+        for iter, (batch_graphs, batch_labels) in enumerate(data_loader):
             batch_x = batch_graphs.ndata['feat'].to(device)
-            batch_e = batch_graphs.edata['feat'].to(device)
-            batch_snorm_e = batch_snorm_e.to(device)
-            batch_snorm_n = batch_snorm_n.to(device)
             batch_labels = batch_labels.to(device)
-            batch_scores = model.forward(batch_graphs, batch_x, batch_e, batch_snorm_n, batch_snorm_e)
+            batch_scores = model.forward(batch_graphs, batch_x)
             loss = model.loss(batch_scores, batch_labels)
             epoch_test_loss += loss.detach().item()
             list_scores.append(batch_scores.detach())

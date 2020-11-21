@@ -71,7 +71,7 @@ def view_model_param(net_params):
 """
 
 
-def train_val_pipeline(dataset, params, net_params, dirs):
+def train_val_pipeline(dataset, params, net_params):
     t0 = time.time()
     per_epoch_time = []
 
@@ -79,17 +79,7 @@ def train_val_pipeline(dataset, params, net_params, dirs):
     MODEL_NAME = 'PNA'
 
     trainset, valset, testset = dataset.train, dataset.val, dataset.test
-
-    root_log_dir, root_ckpt_dir, write_file_name, write_config_file = dirs
     device = net_params['device']
-
-    # Write the network and optimization hyper-parameters in folder config/
-    with open(write_config_file + '.txt', 'w') as f:
-        f.write("""Dataset: {},\nModel: {}\n\nparams={}\n\nnet_params={}\n\n\nTotal Parameters: {}\n\n""".format(
-            DATASET_NAME, MODEL_NAME, params, net_params, net_params['total_param']))
-
-    log_dir = os.path.join(root_log_dir, "RUN_" + str(0))
-    writer = SummaryWriter(log_dir=log_dir)
 
     # setting seeds
     random.seed(params['seed'])
@@ -131,20 +121,13 @@ def train_val_pipeline(dataset, params, net_params, dirs):
                 t.set_description('Epoch %d' % epoch)
                 start = time.time()
 
-                epoch_train_loss, epoch_train_roc, optimizer = train_epoch(model, optimizer, device, train_loader,
-                                                                           epoch)
+                epoch_train_loss, epoch_train_roc, optimizer = train_epoch(model, optimizer, device, train_loader, epoch)
                 epoch_val_loss, epoch_val_roc = evaluate_network(model, device, val_loader, epoch)
 
                 epoch_train_losses.append(epoch_train_loss)
                 epoch_val_losses.append(epoch_val_loss)
                 epoch_train_ROCs.append(epoch_train_roc.item())
                 epoch_val_ROCs.append(epoch_val_roc.item())
-
-                writer.add_scalar('train/_loss', epoch_train_loss, epoch)
-                writer.add_scalar('val/_loss', epoch_val_loss, epoch)
-                writer.add_scalar('train/_roc', epoch_train_roc, epoch)
-                writer.add_scalar('val/_roc', epoch_val_roc, epoch)
-                writer.add_scalar('learning_rate', optimizer.param_groups[0]['lr'], epoch)
 
                 _, epoch_test_roc = evaluate_network(model, device, test_loader, epoch)
                 epoch_test_ROCs.append(epoch_test_roc.item())
@@ -187,19 +170,6 @@ def train_val_pipeline(dataset, params, net_params, dirs):
     print("TOTAL TIME TAKEN: {:.4f}s".format(time.time() - t0))
     print("AVG TIME PER EPOCH: {:.4f}s".format(np.mean(per_epoch_time)))
 
-    writer.close()
-
-    """
-        Write the results in out_dir/results folder
-    """
-    with open(write_file_name + '.txt', 'w') as f:
-        f.write("""Dataset: {},\nModel: {}\n\nparams={}\n\nnet_params={}\n\n{}\n\nTotal Parameters: {}\n\n
-    FINAL RESULTS\nTEST ROC of Best Val: {:.4f}\nBest TRAIN ROC: {:.4f}\nTRAIN ROC of Best Val: {:.4f}\nBest VAL ROC: {:.4f}\n\n
-    Total Time Taken: {:.4f} hrs\nAverage Time Per Epoch: {:.4f} s\n\n\n""" \
-                .format(DATASET_NAME, MODEL_NAME, params, net_params, model, net_params['total_param'],
-                        best_val_test_roc, best_train_roc, best_val_train_roc, best_val_roc, (time.time() - t0) / 3600,
-                        np.mean(per_epoch_time)))
-
 
 def main():
     """
@@ -211,7 +181,7 @@ def main():
     parser.add_argument('--gpu_id', help="Please give a value for gpu id")
     parser.add_argument('--dataset', help="Please give a value for dataset name")
     parser.add_argument('--seed', help="Please give a value for seed")
-    parser.add_argument('--epochs', help="Please give a value for epochs")
+    parser.add_argument('--epochs', type=int, help="Please give a value for epochs")
     parser.add_argument('--batch_size', help="Please give a value for batch_size")
     parser.add_argument('--init_lr', help="Please give a value for init_lr")
     parser.add_argument('--lr_reduce_factor', help="Please give a value for lr_reduce_factor")
@@ -230,7 +200,6 @@ def main():
     parser.add_argument('--batch_norm', help="Please give a value for batch_norm")
     parser.add_argument('--max_time', help="Please give a value for max_time")
     parser.add_argument('--expid', help='Experiment id.')
-
     parser.add_argument('--aggregators', type=str, help='Aggregators to use.')
     parser.add_argument('--scalers', type=str, help='Scalers to use.')
     parser.add_argument('--posttrans_layers', type=int, help='posttrans_layers.')
@@ -252,7 +221,7 @@ def main():
     else:
         DATASET_NAME = config['dataset']
 
-    dataset = HIVDataset(DATASET_NAME, pos_enc_dim=int(args.pos_enc_dim), norm=args.lap_norm)
+    dataset = HIVDataset(DATASET_NAME)
     # parameters
     params = config['params']
     if args.seed is not None:
@@ -313,7 +282,7 @@ def main():
                                log=torch.mean(torch.log(D + 1)))
 
     net_params['total_param'] = view_model_param(net_params)
-    train_val_pipeline(dataset, params, net_params, dirs)
+    train_val_pipeline(dataset, params, net_params)
 
 
 main()

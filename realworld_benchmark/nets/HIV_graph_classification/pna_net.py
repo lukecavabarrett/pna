@@ -39,20 +39,12 @@ class PNANet(nn.Module):
 
         self.MLP_layer = MLPReadout(out_dim, 1)  # 1 out dim since regression problem
 
-    def forward(self, g, h, e, snorm_n, snorm_e):
+    def forward(self, g, h):
         h = self.embedding_h(h)
         h = self.in_feat_dropout(h)
-        if self.pos_enc_dim > 0:
-            h_pos_enc = self.embedding_pos_enc(g.ndata['pos_enc'].to(self.device))
-            h = h + h_pos_enc
-        if self.edge_feat:
-            e = self.embedding_e(e)
 
         for i, conv in enumerate(self.layers):
-            h_t = conv(g, h, e, snorm_n)
-            if self.gru_enable and i != len(self.layers) - 1:
-                h_t = self.gru(h, h_t)
-            h = h_t
+            h = conv(g, h)
 
         g.ndata['h'] = h
 
