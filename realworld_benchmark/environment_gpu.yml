@@ -41,3 +41,5 @@ dependencies:
 - scikit-image=0.15.0
 - requests==2.22.0
 - tqdm==4.43.0
+- pip:
+  - ogb==1.2.2

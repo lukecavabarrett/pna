@@ -1,7 +1,7 @@
 import torch.nn as nn
 import dgl
 from models.dgl.pna_layer import PNASimpleLayer
-from realworld_benchmark.nets.mlp_readout_layer import MLPReadout
+from nets.mlp_readout_layer import MLPReadout
 import torch
 from ogb.graphproppred.mol_encoder import AtomEncoder
 
