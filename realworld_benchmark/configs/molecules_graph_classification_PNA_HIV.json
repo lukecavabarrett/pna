@@ -1,0 +1,34 @@
+{
+  "gpu": {
+    "use": true,
+    "id": 0
+  },
+  "model": "PNA",
+  "dataset": "HIV",
+
+  "params": {
+    "seed": 41,
+    "epochs": 200,
+    "batch_size": 128,
+    "init_lr": 0.01,
+    "lr_reduce_factor": 0.5,
+    "lr_schedule_patience": 20,
+    "min_lr": 1e-4,
+    "weight_decay": 3e-6,
+    "print_epoch_interval": 5,
+    "max_time": 48
+  },
+  "net_params": {
+    "L": 4,
+    "hidden_dim": 70,
+    "out_dim": 70,
+    "residual": true,
+    "readout": "mean",
+    "in_feat_dropout": 0.0,
+    "dropout": 0.3,
+    "batch_norm": true,
+    "aggregators": "mean max min std",
+    "scalers": "identity amplification attenuation",
+    "posttrans_layers" : 1
+  }
+}

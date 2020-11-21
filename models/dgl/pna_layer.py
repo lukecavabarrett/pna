@@ -150,7 +150,7 @@ class PNALayer(nn.Module):
 
 class PNASimpleLayer(nn.Module):
 
-    def __init__(self, in_dim, out_dim, aggregators, scalers, avg_d, dropout, batch_norm, activation,
+    def __init__(self, in_dim, out_dim, aggregators, scalers, avg_d, dropout, batch_norm, residual,
                 posttrans_layers=1):
         """
         A simpler version of PNA layer that simply aggregates the neighbourhood (similar to GCN and GIN),
@@ -177,13 +177,12 @@ class PNASimpleLayer(nn.Module):
         self.out_dim = out_dim
         self.dropout = dropout
         self.batch_norm = batch_norm
+        self.residual = residual
 
         self.batchnorm_h = nn.BatchNorm1d(out_dim)
-        self.activation = activation
-        self.posttrans = MLP(in_size=(len(aggregators) * len(scalers) + 1) * in_dim, hidden_size=out_dim,
-                            out_size=out_dim, layers=posttrans_layers,
-                            mid_activation=activation, last_activation=activation,
-                            dropout=dropout, mid_b_norm=batch_norm, last_b_norm=batch_norm)
+        self.posttrans = MLP(in_size=(len(aggregators) * len(scalers)) * in_dim, hidden_size=out_dim,
+                             out_size=out_dim, layers=posttrans_layers, mid_activation='relu',
+                             last_activation='none', dropout=dropout)
         self.avg_d = avg_d
 
 
@@ -196,17 +195,25 @@ class PNASimpleLayer(nn.Module):
 
 
     def forward(self, g, h):
+        h_in = h
         g.ndata['h'] = h
 
         # aggregation
         g.update_all(fn.copy_u('h', 'm'), self.reduce_func)
-        h = torch.cat([h, g.ndata['h']], dim=1)
+        h = g.ndata['h']
 
         # posttransformation
         h = self.posttrans(h)
 
-        return h
+        # batch normalization and residual
+        if self.batch_norm:
+            h = self.batchnorm_h(h)
+        h = F.relu(h)
+        if self.residual:
+            h = h_in + h
 
+        h = F.dropout(h, self.dropout, training=self.training)
+        return h
 
     def __repr__(self):
         return '{}(in_channels={}, out_channels={})'.format(self.__class__.__name__, self.in_dim, self.out_dim)
