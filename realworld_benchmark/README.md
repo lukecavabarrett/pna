@@ -32,6 +32,11 @@ python { main_molecules.py | main_superpixels.py } [--param=value ...] --dataset
 You can find below the hyperparameters we used for our experiments. In general, the depth of the architectures was not changed while the width was adjusted to keep the total number of parameters of the model between 100k and 110k as done in "Benchmarking GNNs" to ensure a fair comparison of the architectures. Refer to our [paper](https://arxiv.org/abs/2004.05718) for an interpretation of the results.
 
 ```
+For OGB leaderboard (hyperparameters taken from the DGN model - 300k parameters):
+
+python -m main_HIV --weight_decay=3e-6 --L=4 --hidden_dim=70 --out_dim=70 --residual=True --readout=mean --in_feat_dropout=0.0 --dropout=0.3 --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --dataset HIV --gpu_id 0 --config "configs/molecules_graph_classification_PNA_HIV.json" --epochs=200 --init_lr=0.01 --lr_reduce_factor=0.5 --lr_schedule_patience=20 --min_lr=0.0001
+
+
 For the leaderboard (2nd version of the datasets - 400/500k parameters)
 
 # ZINC
