@@ -1,39 +1,17 @@
-"""
-    IMPORTING LIBS
-"""
-
 import numpy as np
 import os
 import time
 import random
 import argparse, json
-
 import torch
-
 import torch.optim as optim
 from torch.utils.data import DataLoader
-
-from tensorboardX import SummaryWriter
 from tqdm import tqdm
 
-
-class DotDict(dict):
-    def __init__(self, **kwds):
-        self.update(kwds)
-        self.__dict__ = self
-
-
-"""
-    IMPORTING CUSTOM MODULES/METHODS
-"""
 from nets.HIV_graph_classification.pna_net import PNANet
 from data.HIV import HIVDataset  # import dataset
 from train.train_HIV_graph_classification import train_epoch_sparse as train_epoch, \
     evaluate_network_sparse as evaluate_network
-
-"""
-    GPU Setup
-"""
 
 
 def gpu_setup(use_gpu, gpu_id):
@@ -49,11 +27,6 @@ def gpu_setup(use_gpu, gpu_id):
     return device
 
 
-"""
-    VIEWING MODEL CONFIG AND PARAMS
-"""
-
-
 def view_model_param(net_params):
     model = PNANet(net_params)
     total_param = 0
@@ -66,17 +39,9 @@ def view_model_param(net_params):
     return total_param
 
 
-"""
-    TRAINING CODE
-"""
-
-
 def train_val_pipeline(dataset, params, net_params):
     t0 = time.time()
     per_epoch_time = []
-
-    DATASET_NAME = dataset.name
-    MODEL_NAME = 'PNA'
 
     trainset, valset, testset = dataset.train, dataset.val, dataset.test
     device = net_params['device']
@@ -172,10 +137,6 @@ def train_val_pipeline(dataset, params, net_params):
 
 
 def main():
-    """
-        USER CONTROLS
-    """
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', help="Please give a config.json file with training/model/data/param details")
     parser.add_argument('--gpu_id', help="Please give a value for gpu id")
@@ -215,13 +176,14 @@ def main():
         config['gpu']['id'] = int(args.gpu_id)
         config['gpu']['use'] = True
     device = gpu_setup(config['gpu']['use'], config['gpu']['id'])
+
     # dataset, out_dir
     if args.dataset is not None:
         DATASET_NAME = args.dataset
     else:
         DATASET_NAME = config['dataset']
-
     dataset = HIVDataset(DATASET_NAME)
+
     # parameters
     params = config['params']
     if args.seed is not None:

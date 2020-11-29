@@ -14,7 +14,9 @@ def scale_amplification(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
 
 
 def scale_attenuation(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (avg_deg['log'] / torch.log(deg + 1))
+    scale = avg_deg['log'] / torch.log(deg + 1)
+    scale[deg == 0] = 1
+    return src * scale
 
 
 def scale_linear(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
@@ -22,7 +24,9 @@ def scale_linear(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
 
 
 def scale_inverse_linear(src: Tensor, deg: Tensor, avg_deg: Dict[str, float]):
-    return src * (avg_deg['lin'] / deg)
+    scale = avg_deg['lin'] / deg
+    scale[deg == 0] = 1
+    return src * scale
 
 
 SCALERS = {

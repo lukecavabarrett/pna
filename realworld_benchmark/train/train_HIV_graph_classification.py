@@ -1,24 +1,9 @@
-"""
-    Utility functions for training one epoch
-    and evaluating one epoch
-"""
 import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader
-import dgl
-import numpy as np
 from ogb.graphproppred import Evaluator
-from tqdm import tqdm
-
-"""
-    For GCNs
-"""
-
 
 def train_epoch_sparse(model, optimizer, device, data_loader, epoch):
     model.train()
     epoch_loss = 0
-    epoch_train_ROC = 0
     list_scores = []
     list_labels = []
     for iter, (batch_graphs, batch_labels) in enumerate(data_loader):
