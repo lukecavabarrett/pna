@@ -4,14 +4,22 @@
 
 ## Overview
 
-We provide the scripts for the download and execution of the real-world benchmarks we used. Most of the scripts in this directory were taken directly from or inspired by "Benchmarking GNNs" by Dwivedi _et al._ refer to their [code](https://github.com/graphdeeplearning/benchmarking-gnns) and [paper](https://arxiv.org/abs/2003.00982) for more details on their work.
+We provide the scripts for the download and execution of the real-world benchmarks we used. 
+Many scripts in this directory were taken directly from or inspired by "Benchmarking GNNs" 
+by Dwivedi _et al._ refer to their [code](https://github.com/graphdeeplearning/benchmarking-gnns) 
+and [paper](https://arxiv.org/abs/2003.00982) for more details on their work. The graph classification
+benchmark MolHIV comes from the [Open Graph Benchmark](https://ogb.stanford.edu/).
 
 - `configs` contains .json configuration files for the various datasets;
 - `data` contains scripts to download the datasets;
 - `nets` contains the architectures that were used with the PNA in the benchmarks;
 - `train` contains the training scripts.
   
-These benchmarks use the DGL version of PNA (`../models/dgl`). Below you can find the instructions on how to create the dataset and run the models, these are also available in more details this [notebook](https://colab.research.google.com/drive/1RnV4MBjCl98eubAGpEF-eXdAW5mTP3h3?usp=sharing).
+These benchmarks use the DGL version of PNA (`../models/dgl`) with the MolHIV model using the *simple* layer architecture. 
+Below you can find the instructions on how to download the datasets and run the models. 
+You can run these scripts directly in this [notebook](https://colab.research.google.com/drive/1RnV4MBjCl98eubAGpEF-eXdAW5mTP3h3?usp=sharing).
+
+
 
 ## Test run
 

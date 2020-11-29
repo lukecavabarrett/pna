@@ -97,7 +97,7 @@ class PNAConv(MessagePassing):
 
             in_channels = (len(aggregators) * len(scalers) + 1) * self.F_in
             modules = [Linear(in_channels, self.F_out)]
-            for _ in range(pre_layers - 1):
+            for _ in range(post_layers - 1):
                 modules += [ReLU()]
                 modules += [Linear(self.F_out, self.F_out)]
             self.post_nns.append(Sequential(*modules))
@@ -159,4 +159,92 @@ class PNAConv(MessagePassing):
     def __repr__(self):
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, towers={self.towers}, dim={self.dim})')
+        raise NotImplementedError
+
+
+class PNAConvSimple(MessagePassing):
+    r"""The Principal Neighbourhood Aggregation graph convolution operator
+    from the `"Principal Neighbourhood Aggregation for Graph Nets"
+    <https://arxiv.org/abs/2004.05718>`_ paper
+        .. math::
+            \bigoplus = \underbrace{\begin{bmatrix}I \\ S(D, \alpha=1) \\
+            S(D, \alpha=-1) \end{bmatrix} }_{\text{scalers}}
+            \otimes \underbrace{\begin{bmatrix} \mu \\ \sigma \\ \max \\ \min
+            \end{bmatrix}}_{\text{aggregators}},
+        in:
+        .. math::
+            X_i^{(t+1)} = U \left( \underset{(j,i) \in E}{\bigoplus}
+            M \left(X_j^{(t)} \right) \right)
+        where :math:`U` denote the MLP referred to with posttrans.
+        Args:
+            in_channels (int): Size of each input sample.
+            out_channels (int): Size of each output sample.
+            aggregators (list of str): Set of aggregation function identifiers,
+                namely :obj:`"sum"`, :obj:`"mean"`, :obj:`"min"`, :obj:`"max"`,
+                :obj:`"var"` and :obj:`"std"`.
+            scalers: (list of str): Set of scaling function identifiers, namely
+                :obj:`"identity"`, :obj:`"amplification"`,
+                :obj:`"attenuation"`, :obj:`"linear"` and
+                :obj:`"inverse_linear"`.
+            deg (Tensor): Histogram of in-degrees of nodes in the training set,
+                used by scalers to normalize.
+            post_layers (int, optional): Number of transformation layers after
+                aggregation (default: :obj:`1`).
+            **kwargs (optional): Additional arguments of
+                :class:`torch_geometric.nn.conv.MessagePassing`.
+        """
+    def __init__(self, in_channels: int, out_channels: int,
+                 aggregators: List[str], scalers: List[str], deg: Tensor,
+                 post_layers: int = 1, **kwargs):
+
+        super(PNAConvSimple, self).__init__(aggr=None, node_dim=0, **kwargs)
+
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.aggregators = [AGGREGATORS[aggr] for aggr in aggregators]
+        self.scalers = [SCALERS[scale] for scale in scalers]
+
+        self.F_in = in_channels
+        self.F_out = self.out_channels
+
+        deg = deg.to(torch.float)
+        self.avg_deg: Dict[str, float] = {
+            'lin': deg.mean().item(),
+            'log': (deg + 1).log().mean().item(),
+            'exp': deg.exp().mean().item(),
+        }
+
+        in_channels = (len(aggregators) * len(scalers)) * self.F_in
+        modules = [Linear(in_channels, self.F_out)]
+        for _ in range(post_layers - 1):
+            modules += [ReLU()]
+            modules += [Linear(self.F_out, self.F_out)]
+        self.post_nn = Sequential(*modules)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        reset(self.post_nn)
+
+    def forward(self, x: Tensor, edge_index: Adj, edge_attr: OptTensor = None) -> Tensor:
+
+        # propagate_type: (x: Tensor)
+        out = self.propagate(edge_index, x=x, size=None)
+        return self.post_nn(out)
+
+    def message(self, x_j: Tensor) -> Tensor:
+        return x_j
+
+    def aggregate(self, inputs: Tensor, index: Tensor,
+                  dim_size: Optional[int] = None) -> Tensor:
+        outs = [aggr(inputs, index, dim_size) for aggr in self.aggregators]
+        out = torch.cat(outs, dim=-1)
+
+        deg = degree(index, dim_size, dtype=inputs.dtype).view(-1, 1)
+        outs = [scaler(out, deg, self.avg_deg) for scaler in self.scalers]
+        return torch.cat(outs, dim=-1)
+
+    def __repr__(self):
+        return (f'{self.__class__.__name__}({self.in_channels}, '
+                f'{self.out_channels}')
         raise NotImplementedError
