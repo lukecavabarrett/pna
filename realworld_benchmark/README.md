@@ -42,7 +42,7 @@ You can find below the hyperparameters we used for our experiments. In general, 
 ```
 For OGB leaderboard (hyperparameters taken from the DGN model - 300k parameters):
 
-python -m main_HIV --weight_decay=3e-6 --L=4 --hidden_dim=70 --out_dim=70 --residual=True --readout=mean --in_feat_dropout=0.0 --dropout=0.3 --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --dataset HIV --gpu_id 0 --config "configs/molecules_graph_classification_PNA_HIV.json" --epochs=200 --init_lr=0.01 --lr_reduce_factor=0.5 --lr_schedule_patience=20 --min_lr=0.0001
+python -m main_HIV --weight_decay=3e-6 --L=4 --hidden_dim=80 --out_dim=80 --residual=True --readout=mean --in_feat_dropout=0.0 --dropout=0.3 --batch_norm=True --aggregators="mean max min std" --scalers="identity amplification attenuation" --dataset HIV --gpu_id 0 --config "configs/molecules_graph_classification_PNA_HIV.json" --epochs=200 --init_lr=0.01 --lr_reduce_factor=0.5 --lr_schedule_patience=20 --min_lr=0.0001
 
 
 For the leaderboard (2nd version of the datasets - 400/500k parameters)
