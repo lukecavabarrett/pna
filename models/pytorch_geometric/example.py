@@ -28,7 +28,7 @@ class Net(torch.nn.Module):
     def __init__(self):
         super(Net, self).__init__()
 
-        self.node_emb = AtomEncoder(emb_dim=70)
+        self.node_emb = AtomEncoder(emb_dim=80)
 
         aggregators = ['mean', 'min', 'max', 'std']
         scalers = ['identity', 'amplification', 'attenuation']
@@ -36,12 +36,12 @@ class Net(torch.nn.Module):
         self.convs = ModuleList()
         self.batch_norms = ModuleList()
         for _ in range(4):
-            conv = PNAConvSimple(in_channels=70, out_channels=70, aggregators=aggregators,
+            conv = PNAConvSimple(in_channels=80, out_channels=80, aggregators=aggregators,
                                  scalers=scalers, deg=deg, post_layers=1)
             self.convs.append(conv)
-            self.batch_norms.append(BatchNorm(70))
+            self.batch_norms.append(BatchNorm(80))
 
-        self.mlp = Sequential(Linear(70, 35), ReLU(), Linear(35, 17), ReLU(), Linear(17, 1))
+        self.mlp = Sequential(Linear(80, 40), ReLU(), Linear(40, 20), ReLU(), Linear(20, 1))
 
     def forward(self, x, edge_index, edge_attr, batch):
         x = self.node_emb(x)
