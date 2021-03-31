@@ -182,7 +182,7 @@ class PNASimpleLayer(nn.Module):
         self.batchnorm_h = nn.BatchNorm1d(out_dim)
         self.posttrans = MLP(in_size=(len(aggregators) * len(scalers)) * in_dim, hidden_size=out_dim,
                              out_size=out_dim, layers=posttrans_layers, mid_activation='relu',
-                             last_activation='none', dropout=dropout)
+                             last_activation='none')
         self.avg_d = avg_d
 
 
