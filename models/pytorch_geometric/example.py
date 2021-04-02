@@ -14,9 +14,9 @@ from models.pytorch_geometric.pna import PNAConvSimple
 dataset = PygGraphPropPredDataset(name="ogbg-molhiv")
 
 split_idx = dataset.get_idx_split()
-train_loader = DataLoader(dataset[split_idx["train"]], batch_size=32, shuffle=True)
-val_loader = DataLoader(dataset[split_idx["valid"]], batch_size=32, shuffle=False)
-test_loader = DataLoader(dataset[split_idx["test"]], batch_size=32, shuffle=False)
+train_loader = DataLoader(dataset[split_idx["train"]], batch_size=128, shuffle=True)
+val_loader = DataLoader(dataset[split_idx["valid"]], batch_size=128, shuffle=False)
+test_loader = DataLoader(dataset[split_idx["test"]], batch_size=128, shuffle=False)
 
 # Compute in-degree histogram over training data.
 deg = torch.zeros(10, dtype=torch.long)
@@ -57,7 +57,7 @@ class Net(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = Net().to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=3e-6)
 scheduler = ReduceLROnPlateau(optimizer, mode='max', factor=0.5, patience=20, min_lr=0.0001)
 
 
