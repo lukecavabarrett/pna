@@ -242,9 +242,9 @@ def main():
     parser.add_argument('--aggregators', type=str, help='Aggregators to use.')
     parser.add_argument('--scalers', type=str, help='Scalers to use.')
     parser.add_argument('--towers', type=int, help='Towers to use.')
-    parser.add_argument('--divide_input_first', type=bool, help='Whether to divide the input in first layers.')
-    parser.add_argument('--divide_input_last', type=bool, help='Whether to divide the input in last layer.')
-    parser.add_argument('--gru', type=bool, help='Whether to use gru.')
+    parser.add_argument('--divide_input_first', type=str, help='Whether to divide the input in first layers.')
+    parser.add_argument('--divide_input_last', type=str, help='Whether to divide the input in last layer.')
+    parser.add_argument('--gru', type=str, help='Whether to use gru.')
     parser.add_argument('--edge_dim', type=int, help='Size of edge embeddings.')
     parser.add_argument('--pretrans_layers', type=int, help='pretrans_layers.')
     parser.add_argument('--posttrans_layers', type=int, help='posttrans_layers.')
@@ -348,11 +348,11 @@ def main():
     if args.towers is not None:
         net_params['towers'] = args.towers
     if args.divide_input_first is not None:
-        net_params['divide_input_first'] = args.divide_input_first
+        net_params['divide_input_first'] = True if args.divide_input_first == 'True' else False
     if args.divide_input_last is not None:
-        net_params['divide_input_last'] = args.divide_input_last
+        net_params['divide_input_last'] = True if args.divide_input_last == 'True' else False
     if args.gru is not None:
-        net_params['gru'] = args.gru
+        net_params['gru'] = True if args.gru == 'True' else False
     if args.edge_dim is not None:
         net_params['edge_dim'] = args.edge_dim
     if args.pretrans_layers is not None:
