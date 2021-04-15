@@ -94,7 +94,7 @@ def train_val_pipeline(dataset, params, net_params, dirs):
     random.seed(params['seed'])
     np.random.seed(params['seed'])
     torch.manual_seed(params['seed'])
-    if device == 'cuda':
+    if device.type == 'cuda':
         torch.cuda.manual_seed(params['seed'])
 
     print("Training Graphs: ", len(trainset))
