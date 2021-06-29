@@ -23,11 +23,11 @@ We provide the implementation of the Principal Neighbourhood Aggregation (PNA) i
 
 ## Reference
 ```
-@article{corso2020principal,
-  title={Principal Neighbourhood Aggregation for Graph Nets},
-  author={Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Li{\`o}, Pietro and Veli{\v{c}}kovi{\'c}, Petar},
-  journal={arXiv preprint arXiv:2004.05718},
-  year={2020}
+@inproceedings{corso2020pna,
+ title = {Principal Neighbourhood Aggregation for Graph Nets},
+ author = {Corso, Gabriele and Cavalleri, Luca and Beaini, Dominique and Li\`{o}, Pietro and Veli\v{c}kovi\'{c}, Petar},
+ booktitle = {Advances in Neural Information Processing Systems},
+ year = {2020}
 }
 ```
 
