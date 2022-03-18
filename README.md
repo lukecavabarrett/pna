@@ -38,4 +38,4 @@ MIT
 ## Acknowledgements
 
 The authors would like to thank Saro Passaro for running some of the tests presented in this repository and 
-Giorgos Bouritsas, Fabrizio Frasca, Leonardo Cotta, Zhanghao Wu and Zhanqiu Zhang for pointing out some issues with the code.
+Giorgos Bouritsas, Fabrizio Frasca, Leonardo Cotta, Zhanghao Wu, Zhanqiu Zhang and George Watkins for pointing out some issues with the code.
