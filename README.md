@@ -2,6 +2,8 @@
 
 Implementation of Principal Neighbourhood Aggregation for Graph Nets [arxiv.org/abs/2004.05718](https://arxiv.org/abs/2004.05718) in PyTorch, DGL and PyTorch Geometric.
 
+*Update: now you can find PNA directly integrated in both [PyTorch Geometric](https://pytorch-geometric.readthedocs.io/en/latest/modules/nn.html#torch_geometric.nn.conv.PNAConv) and [DGL](https://docs.dgl.ai/generated/dgl.nn.pytorch.conv.PNAConv.html)!*
+
 ![symbol](./multitask_benchmark/images/symbol.png)
 
 ## Overview
