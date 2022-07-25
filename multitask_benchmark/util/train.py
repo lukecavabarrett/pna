@@ -229,4 +229,5 @@ def execute_train(gnn_args, args):
     model.load_state_dict(torch.load('{}.pkl'.format(best_epoch)))
 
     # Testing
-    compute_test()
+    with torch.no_grad():
+        compute_test()
