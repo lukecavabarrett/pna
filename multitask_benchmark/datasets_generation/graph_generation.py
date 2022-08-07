@@ -117,7 +117,7 @@ def lobster(N, seed):
 
 
 def randomize(A):
-    """ Adds some randomness by toggling some edges without chancing the expected number of edges of the graph """
+    """ Adds some randomness by toggling some edges without changing the expected number of edges of the graph """
     BASE_P = 0.9
 
     # e is the number of edges, r the number of missing edges
